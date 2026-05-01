@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>メンバーシップ | 薬膳レシピ</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --green:#5C8A6B;--green-l:#EEF5F0;--green-m:#C4DCC9;
+  --amber:#C8873A;--amber-l:#FDF3E7;--amber-m:#E8C89A;
+  --cream:#FDFBF7;--warm-gray:#6B6560;--dark:#2C2820;
+  --border:#E8E2D8;--r:12px;--rs:8px;
+  --spring:#5C8A6B;--spring-l:#EEF5F0;--spring-m:#C4DCC9;
+  --summer:#C84040;--summer-l:#FBF0EF;--summer-m:#F0C4C0;
+  --autumn:#C8873A;--autumn-l:#FDF3E7;--autumn-m:#E8C89A;
+  --winter:#4878A8;--winter-l:#EEF3F9;--winter-m:#B8CCE0;
+}
+body{font-family:'Hiragino Kaku Gothic Pro','Hiragino Sans','Yu Gothic',sans-serif;background:var(--cream);color:var(--dark);line-height:1.7}
+a{text-decoration:none;color:inherit}
+
+/* Header */
+.header{background:#fff;border-bottom:1px solid var(--border);padding:14px 1rem;position:sticky;top:0;z-index:100}
+.header-inner{max-width:580px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:15px;font-weight:700;color:var(--dark)}
+.logo span{color:var(--green)}
+.back-btn{font-size:12px;color:var(--warm-gray);border:1px solid var(--border);padding:6px 12px;border-radius:20px;cursor:pointer;background:transparent}
+.back-btn:hover{background:var(--green-l)}
+
+/* Hero */
+.hero{background:linear-gradient(135deg,#EEF5F0 0%,#FDF8F0 100%);padding:2rem 1rem;text-align:center;border-bottom:1px solid var(--border)}
+.hero-inner{max-width:580px;margin:0 auto}
+.hero-badge{display:inline-block;background:var(--green-l);color:var(--green);font-size:11px;font-weight:700;padding:4px 14px;border-radius:20px;border:1px solid var(--green-m);margin-bottom:12px}
+.hero-title{font-size:22px;font-weight:700;color:var(--dark);margin-bottom:8px;line-height:1.4}
+.hero-sub{font-size:13px;color:var(--warm-gray);line-height:1.8;margin-bottom:1.25rem}
+.price-box{display:inline-flex;align-items:baseline;gap:6px;background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:10px 20px;margin-bottom:1rem}
+.price-num{font-size:26px;font-weight:700;color:var(--dark)}
+.price-unit{font-size:13px;color:var(--warm-gray)}
+.benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem}
+.benefit{background:#fff;border:1px solid var(--border);border-radius:var(--rs);padding:10px 8px;text-align:center}
+.benefit-icon{font-size:20px;margin-bottom:4px}
+.benefit-text{font-size:11px;color:var(--warm-gray);line-height:1.5}
+.btn-join{display:block;width:100%;max-width:320px;margin:0 auto;padding:15px;background:var(--amber);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;transition:opacity 0.15s}
+.btn-join:hover{opacity:0.85}
+.join-note{font-size:11px;color:var(--warm-gray);margin-top:8px}
+
+/* Season Tabs */
+.tabs-wrap{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:53px;z-index:90}
+.tabs{max-width:580px;margin:0 auto;display:flex}
+.tab{flex:1;padding:12px 0;text-align:center;font-size:13px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;color:var(--warm-gray);transition:all 0.2s}
+.tab.active-spring{color:var(--spring);border-color:var(--spring)}
+.tab.active-summer{color:var(--summer);border-color:var(--summer)}
+.tab.active-autumn{color:var(--autumn);border-color:var(--autumn)}
+.tab.active-winter{color:var(--winter);border-color:var(--winter)}
+
+/* Content */
+.content{max-width:580px;margin:0 auto;padding:1.25rem 1rem}
+.season-panel{display:none}
+.season-panel.active{display:block}
+.season-header{margin-bottom:1.25rem;padding:1rem;border-radius:var(--r);border:1px solid}
+.season-header.spring{background:var(--spring-l);border-color:var(--spring-m)}
+.season-header.summer{background:var(--summer-l);border-color:var(--summer-m)}
+.season-header.autumn{background:var(--autumn-l);border-color:var(--autumn-m)}
+.season-header.winter{background:var(--winter-l);border-color:var(--winter-m)}
+.season-title{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:4px}
+.season-desc{font-size:13px;color:var(--warm-gray)}
+.organ-badge{display:inline-block;font-size:11px;padding:2px 10px;border-radius:20px;margin-bottom:8px}
+
+/* Recipe Cards */
+.recipe-list{display:flex;flex-direction:column;gap:10px;margin-bottom:1.5rem}
+.rcard{border:1px solid var(--border);border-radius:var(--r);background:#fff;overflow:hidden}
+.rcard.free-card{border-color:var(--green-m)}
+.rcard-head{padding:14px 16px 10px}
+.rcard-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:6px}
+.rcard-icon{font-size:22px;flex-shrink:0;margin-top:2px}
+.rcard-info{flex:1}
+.rcard-title{font-size:14px;font-weight:700;color:var(--dark)}
+.rcard-effect{font-size:12px;color:var(--warm-gray);margin-top:3px}
+.free-badge{font-size:10px;background:var(--green-l);color:var(--green);padding:3px 8px;border-radius:10px;border:1px solid var(--green-m);white-space:nowrap;flex-shrink:0}
+.lock-badge{font-size:10px;background:#F5F2EC;color:#9B8E80;padding:3px 8px;border-radius:10px;border:1px solid var(--border);white-space:nowrap;flex-shrink:0}
+
+/* Free recipe content */
+.free-body{padding:0 16px 14px}
+.sec-label{font-size:10px;font-weight:700;color:#9B8E80;letter-spacing:0.06em;margin-bottom:5px}
+.ing-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.ing-tag{font-size:11px;background:var(--green-l);color:var(--green);padding:3px 8px;border-radius:4px;border:1px solid var(--green-m)}
+.step-ol{list-style:none;counter-reset:s}
+.step-ol li{counter-increment:s;font-size:12px;color:var(--warm-gray);padding:4px 0 4px 20px;position:relative;line-height:1.6}
+.step-ol li::before{content:counter(s);position:absolute;left:0;top:5px;width:14px;height:14px;background:var(--green);color:#fff;font-size:9px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:1}
+.divider-line{height:1px;background:var(--border);margin:0 16px}
+.point-box{background:var(--green-l);padding:10px 16px;font-size:12px;color:var(--green);font-weight:700}
+
+/* Locked content */
+.lock-body{padding:0 16px 14px;position:relative}
+.blur-wrap{filter:blur(4px);pointer-events:none;user-select:none}
+.blur-ings{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.blur-ing{font-size:11px;background:var(--green-l);color:var(--green);padding:3px 8px;border-radius:4px}
+.blur-text{font-size:12px;color:var(--warm-gray);line-height:1.7}
+.lock-cover{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.lock-circle{width:40px;height:40px;border-radius:50%;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+.lock-text{font-size:11px;color:var(--warm-gray)}
+
+/* CTA */
+.cta-box{background:var(--amber-l);border:1px solid var(--amber-m);border-radius:var(--r);padding:1.5rem;text-align:center;margin-top:0.5rem}
+.cta-title{font-size:16px;font-weight:700;color:var(--amber);margin-bottom:6px}
+.cta-desc{font-size:13px;color:var(--warm-gray);line-height:1.7;margin-bottom:12px}
+.cta-btn{display:block;width:100%;padding:14px;background:var(--amber);color:#fff;border:none;border-radius:var(--rs);font-size:15px;font-weight:700;cursor:pointer;margin-bottom:8px}
+.cta-btn:hover{opacity:0.85}
+.cta-note{font-size:11px;color:#9B8E80}
+
+/* Footer */
+.footer{text-align:center;padding:2rem 1rem;border-top:1px solid var(--border);margin-top:1rem}
+.footer-logo{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:4px}
+.footer-logo span{color:var(--green)}
+.footer-sub{font-size:12px;color:var(--warm-gray)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <p class="logo">🌿 <span>薬膳</span>キッチン</p>
+    <button class="back-btn" onclick="location.href='yakuzen_checker.html'">← 体質チェックに戻る</button>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <span class="hero-badge">🔓 メンバーシップのご案内</span>
+    <h1 class="hero-title">毎月届く、体質別・季節の<br>薬膳レシピ集</h1>
+    <p class="hero-sub">スーパーで買える食材で、今の体に合うレシピを。<br>難しい知識は不要。舌と体の感覚だけで選べます。</p>
+    <div class="price-box">
+      <span class="price-num">¥500</span>
+      <span class="price-unit">/ 月（いつでも解約可）</span>
+    </div>
+    <div class="benefits">
+      <div class="benefit"><div class="benefit-icon">📖</div><p class="benefit-text">毎月10〜15品の<br>新レシピ</p></div>
+      <div class="benefit"><div class="benefit-icon">🌿</div><p class="benefit-text">体質別に<br>絞り込める</p></div>
+      <div class="benefit"><div class="benefit-icon">🛒</div><p class="benefit-text">全てスーパーで<br>揃う食材</p></div>
+    </div>
+    <button class="btn-join" onclick="alert('noteのメンバーシップページへ移動します')">メンバーシップに参加する</button>
+    <p class="join-note">noteアカウントがあればすぐに始められます</p>
+  </div>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <div class="tab active-spring" id="tab-spring" onclick="switchTab('spring')">🌸 春</div>
+    <div class="tab" id="tab-summer" onclick="switchTab('summer')">☀️ 夏</div>
+    <div class="tab" id="tab-autumn" onclick="switchTab('autumn')">🍂 秋</div>
+    <div class="tab" id="tab-winter" onclick="switchTab('winter')">❄️ 冬</div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- 春 -->
+  <div class="season-panel active" id="panel-spring">
+    <div class="season-header spring">
+      <span class="organ-badge" style="background:#C4DCC9;color:#3A6B4A">養う臓器：肝・胆</span>
+      <p class="season-title">🌸 春のレシピ集（3月〜5月）</p>
+      <p class="season-desc">春は肝の季節。気の巡りを整え、目の疲れ・イライラ・アレルギーを予防します。旬の食材：菜の花・よもぎ・しじみ・クコの実</p>
+    </div>
+    <div class="recipe-list">
+      <div class="rcard free-card">
+        <div class="rcard-head">
+          <div class="rcard-top">
+            <span class="rcard-icon">🍲</span>
+            <div class="rcard-info">
+              <p class="rcard-title">セロリとしじみの気巡りスープ</p>
+              <p class="rcard-effect">✨ 肝の熱を冷まし、気の滞りをほぐしイライラを和らげます</p>
+            </div>
+            <span class="free-badge">無料公開</span>
+          </div>
+        </div>
+        <div class="free-body">
+          <p class="sec-label">材料（2人分）</p>
+          <div class="ing-row">
+            <span class="ing-tag">しじみ 200g</span><span class="ing-tag">セロリ 1本</span>
+            <span class="ing-tag">生姜 1かけ</span><span class="ing-tag">水 600ml</span>
+            <span class="ing-tag">塩 少々</span><span class="ing-tag">ごま油 小さじ1</span>
+          </div>
+          <p class="sec-label">作り方</p>
+          <ol class="step-ol">
+            <li>しじみを水から火にかけ、アクを取りながら出汁を引く</li>
+            <li>斜め切りのセロリと薄切り生姜を加えて5分煮る</li>
+            <li>塩で味を整え、仕上げにごま油をひとたらし</li>
+          </ol>
+        </div>
+        <div class="divider-line"></div>
+        <p class="point-box">🌿 薬膳ポイント：セロリは気を巡らせ肝を整える。しじみは肝を補い目の疲れと解毒を助ける</p>
+      </div>
+      <div class="rcard">
+        <div class="rcard-head">
+          <div class="rcard-top"><span class="rcard-icon">🥬</span>
+            <div class="rcard-info"><p class="rcard-title">クコとほうれん草の養血炒め</p><p class="rcard-effect">✨ 肝血を補い、目のかすみと立ちくらみを改善します</p></div>
+            <span class="lock-badge">🔒 会員限定</span>
+          </div>
+        </div>
+        <div class="lock-body">
+          <div class="blur-wrap"><div class="blur-ings"><span class="blur-ing">ほうれん草 1束</span><span class="blur-ing">クコの実 大さじ1</span><span class="blur-ing">にんにく 1かけ</span><span class="blur-ing">ごま油 小さじ1</span></div><p class="blur-text">1. クコの実を水で戻す　2. ほうれん草を茹でて切る　3. 炒めて合わせる</p></div>
+          <div class="lock-cover"><div class="lock-circle">🔒</div><p class="lock-text">会員の方はレシピの続きを読めます</p></div>
+        </div>
+      </div>
+      <div class="rcard">
+        <div class="rcard-head">
+          <div class="rcard-top"><span class="rcard-icon">🍶</span>
+            <div class="rcard-info"><p class="rcard-title">陳皮入りほっこり白粥</p><p class="rcard-effect">✨ 胃の働きを整え、春の食欲不振と胃もたれを解消します</p></div>
+            <span class="lock-badge">🔒 会員限定</span>
+          </div>
+        </div>
+        <div class="lock-body">
+          <div class="blur-wrap"><p class="blur-text">白米・陳皮・生姜・梅干しを使ったやさしいお粥。胃が弱い春に毎朝食べたい一品。作り方は4ステップでとても簡単です。</p></div>
+          <div class="lock-cover"><div class="lock-circle">🔒</div><p class="lock-text">会員の方はレシピの続きを読めます</p></div>
+        </div>
+      </div>
+      <div class="rcard">
+        <div class="rcard-head">
+          <div class="rcard-top"><span class="rcard-icon">🌸</span>
+            <div class="rcard-info"><p class="rcard-title">菊花と豆腐のさっぱり和え</p><p class="rcard-effect">✨ 春の目の充血・頭ののぼせを冷まします</p></div>
+            <span class="lock-badge">🔒 会員限定</span>
+          </div>
+        </div>
+        <div class="lock-body">
+          <div class="blur-wrap"><p class="blur-text">菊花・絹豆腐・きゅうりを使ったさっぱり和え。10分で作れる簡単レシピです。</p></div>
+          <div class="lock-cover"><div class="lock-circle">🔒</div><p class="lock-text">会員の方はレシピの続きを読めます</p></div>
+        </div>
+      </div>
+      <div class="rcard">
+        <div class="rcard-head">
+          <div class="rcard-top"><span class="rcard-icon">🌿</span>
+            <div class="rcard-info"><p class="rcard-title">よもぎと黒ごまのエネルギー粥</p><p class="rcard-effect">✨ 血を補い、春の倦怠感と気力低下を回復します</p></div>
+            <span class="lock-badge">🔒 会員限定</span>
+          </div>
+        </div>
+        <div class="lock-body">
+          <div class="blur-wrap"><p class="blur-text">よもぎ・黒ごま・もち米を使った春の養生粥。血を補い気力を充実させます。</p></div>
+          <div class="lock-cover"><div class="lock-circle">🔒</div><p class="lock-text">会員の方はレシピの続きを読めます</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="cta-box">
+      <p class="cta-title">🌿 残り4品のレシピを読みたいですか？</p>
+      <p class="cta-desc">メンバーシップでは春・夏・秋・冬<br>全ての季節のレシピをお届けしています</p>
+      <button class="cta-btn" onclick="alert('noteのメンバーシップページへ移動します')">月額¥500で全レシピを読む</button>
+      <p class="cta-note">いつでも解約できます・noteアカウントで参加</p>
+    </div>
+  </div>
+
+  <!-- 夏 -->
+  <div class="season-panel" id="panel-summer">
+    <div class="season-header summer">
+      <span class="organ-badge" style="background:#F0C4C0;color:#903030">養う臓器：心・小腸</span>
+      <p class="season-title">☀️ 夏のレシピ集（6月〜8月）</p>
+      <p class="season-desc">夏は心の季節。体の余分な熱を冷まし、不眠・熱中症・夏バテを予防します。旬の食材：ゴーヤ・トマト・緑豆・百合根・はとむぎ</p>
+    </div>
+    <div class="recipe-list">
+      <div class="rcard free-card">
+        <div class="rcard-head">
+          <div class="rcard-top"><span class="rcard-icon">🥣</span>
+            <div class="rcard-info"><p class="rcard-title">ゴーヤと豆腐の清熱炒め</p><p class="rcard-effect">✨ 体の余分な熱を冷まし、夏バテとイライラを和らげます</p></div>
+            <span class="free-badge">無料公開</span>
+          </div>
+        </div>
+        <div class="free-body">
+          <p class="sec-label">材料（2人分）</p>
+          <div class="ing-row"><span class="ing-tag">ゴーヤ 1/2本</span><span class="ing-tag">絹豆腐 1/2丁</span><span class="ing-tag">卵 1個</span><span class="ing-tag">ごま油 小さじ1</span><span class="ing-tag">塩 少々</span></div>
+          <p class="sec-label">作り方</p>
+          <ol class="step-ol">
+            <li>ゴーヤは薄切りにして塩もみし、5分おいて水気を絞る</li>
+            <li>フライパンにごま油を熱し、ゴーヤを中火で炒める</li>
+            <li>豆腐を崩しながら加え、溶き卵を回し入れて炒める</li>
+            <li>塩で味を整えてできあがり</li>
+          </ol>
+        </div>
+        <div class="divider-line"></div>
+        <p class="point-box">🌿 薬膳ポイント：ゴーヤの苦みが心の熱を冷ます。豆腐で気を補いながら体を整える</p>
+      </div>
+      <div class="rcard"><div class="rcard-head"><div class="rcard-top"><span class="rcard-icon">🍲</span><div class="rcard-info"><p class="rcard-title">百合根と蓮の実の安眠スープ</p><p class="rcard-effect">✨ 心を落ち着かせ、夏の不眠・動悸を和らげます</p></div><span class="lock-badge">🔒 会員限定</span></div></div><div class="lock-body"><div class="blur-wrap"><div class="blur-ings"><span class="blur-ing">百合根 50g</span><span class="blur-ing">蓮の実 大さじ2</span><span class="blur-ing">なつめ 5粒</span></div><p class="blur-text">1. 百合根はばらして洗う　2. 全材料を煮る（30分）　3. 塩で整える</p></div><div class="lock-cover"><div class="lock-circle">🔒</div><p class="lock-text">会員の方はレシピの続きを読めます</p></div></div></div>
+      <div class="rcard"><div class="rcard-head"><div class="rcard-top"><span class="rcard-icon">🥗</span><div class="rcard-info"><p class="rcard-title">緑豆ともやしのさっぱり和え</p><p class="rcard-effect">✨ 解毒・清熱。夏のむくみと肌荒れに効きます</p></div><span class="lock-badge">🔒 会員限定</span></div></div><div class="lock-body"><div class="blur-wrap"><p class="blur-text">緑豆・もやし・黒酢を使ったさっぱり和え。冷蔵庫で冷やして食べると◎</p></div><div class="lock-cover"><div class="lock-circle">🔒</div><p class="lock-text">会員の方はレシピの続きを読めます</p></div></div></div>
+      <div class="rcard"><div class="rcard-head"><div class="rcard-top"><span class="rcard-icon">🍵</span><div class="rcard-info"><p class="rcard-title">スイカの皮と生姜の冷え取り茶</p><p class="rcard-effect">✨ 冷房で冷えた体を内側から温め直します</p></div><span class="lock-badge">🔒 会員限定</span></div></div><div class="lock-body"><div class="blur-wrap"><p class="blur-text">捨てがちなスイカの皮を活用した薬膳茶。夏の体の内側の冷えに。</p></div><div class="lock-cover"><div class="lock-circle">🔒</div><p class="lock-text">会員の方はレシピの続きを読めます</p></div></div></div>
+      <div class="rcard"><div class="rcard-head"><div class="rcard-top"><span class="rcard-icon">🌾</span><div class="rcard-info"><p class="rcard-title">はとむぎとお腹すっきり粥</p><p class="rcard-effect">✨ 夏の湿気と胃もたれをすっきり取り除きます</p></div><span class="lock-badge">🔒 会員限定</span></div></div><div class="lock-body"><div class="blur-wrap"><p class="blur-text">はとむぎ・山芋・生姜を使ったやさしいお粥。夏の湿を除く定番レシピ。</p></div><div class="lock-cover"><div class="lock-circle">🔒</div><p class="lock-text">会員の方はレシピの続きを読めます</p></div></div></div>
+    </div>
+    <div class="cta-box"><p class="cta-title">🌿 残り4品のレシピを読みたいですか？</p><p class="cta-desc">メンバーシップでは春・夏・秋・冬<br>全ての季節のレシピをお届けしています</p><button class="cta-btn" onclick="alert('noteのメンバーシップページへ移動します')">月額¥500で全レシピを読む</button><p class="cta-note">いつでも解約できます・noteアカウントで参加</p></div>
+  </div>
+
+  <!-- 秋 -->
+  <div class="season-panel" id="panel-autumn">
+    <div class="season-header autumn">
+      <span class="organ-badge" style="background:#E8C89A;color:#905020">養う臓器：肺・大腸</span>
+      <p class="season-title">🍂 秋のレシピ集（9月〜11月）</p>
+      <p class="season-desc">秋は肺の季節。乾燥から体を守り、咳・肌荒れ・便秘・気分の落ち込みを予防します。旬の食材：梨・白きくらげ・蓮根・ごま・松の実</p>
+    </div>
+    <div class="recipe-list">
+      <div class="rcard free-card">
+        <div class="rcard-head"><div class="rcard-top"><span class="rcard-icon">🥣</span><div class="rcard-info"><p class="rcard-title">梨と白きくらげの潤いスープ</p><p class="rcard-effect">✨ 肺と胃を潤し、秋の乾燥と咳を内側から防ぎます</p></div><span class="free-badge">無料公開</span></div></div>
+        <div class="free-body">
+          <p class="sec-label">材料（2人分）</p>
+          <div class="ing-row"><span class="ing-tag">梨 1/2個</span><span class="ing-tag">白きくらげ 10g(乾)</span><span class="ing-tag">はちみつ 大さじ1</span><span class="ing-tag">水 400ml</span><span class="ing-tag">クコの実 少々</span></div>
+          <p class="sec-label">作り方</p>
+          <ol class="step-ol">
+            <li>白きくらげを水で30分戻し、石づきを取って小さくちぎる</li>
+            <li>梨は皮を剥いてひと口大に切る</li>
+            <li>水から白きくらげと梨を弱火で20分煮る</li>
+            <li>火を止めてはちみつを加え、クコで飾る</li>
+          </ol>
+        </div>
+        <div class="divider-line"></div>
+        <p class="point-box">🌿 薬膳ポイント：梨と白きくらげはどちらも肺を潤す秋の定番食材。はちみつで腸も整う</p>
+      </div>
+      <div class="rcard"><div class="rcard-head"><div class="rcard-top"><span class="rcard-icon">🌿</span><div class="rcard-info"><p class="rcard-title">蒸し梨と生姜のはちみつ仕立て</p><p class="rcard-effect">✨ 咳・喉の痛みをやさしく鎮めます</p></div><span class="lock-badge">🔒 会員限定</span></div></div><div class="lock-body"><div class="blur-wrap"><p class="blur-text">梨・生姜・はちみつを蒸した秋の定番デザート薬膳。咳に悩む季節に。</p></div><div class="lock-cover"><div class="lock-circle">🔒</div><p class="lock-text">会員の方はレシピの続きを読めます</p></div></div></div>
+      <div class="rcard"><div class="rcard-head"><div class="rcard-top"><span class="rcard-icon">🫘</span><div class="rcard-info"><p class="rcard-title">黒ごまと蜂蜜の腸活ドリンク</p><p class="rcard-effect">✨ 腸を潤し、秋の乾燥による便秘を解消します</p></div><span class="lock-badge">🔒 会員限定</span></div></div><div class="lock-body"><div class="blur-wrap"><p class="blur-text">黒ごま・はちみつ・バナナを使った腸活ドリンク。毎朝飲むと効果的。</p></div><div class="lock-cover"><div class="lock-circle">🔒</div><p class="lock-text">会員の方はレシピの続きを読めます</p></div></div></div>
+      <div class="rcard"><div class="rcard-head"><div class="rcard-top"><span class="rcard-icon">🌹</span><div class="rcard-info"><p class="rcard-title">なつめとバラのめぐり薬膳茶</p><p class="rcard-effect">✨ 気を巡らせ、秋の気分の落ち込みを和らげます</p></div><span class="lock-badge">🔒 会員限定</span></div></div><div class="lock-body"><div class="blur-wrap"><p class="blur-text">なつめ・バラの花びら・クコの実で作る美しいお茶。毎日続けると効果的。</p></div><div class="lock-cover"><div class="lock-circle">🔒</div><p class="lock-text">会員の方はレシピの続きを読めます</p></div></div></div>
+      <div class="rcard"><div class="rcard-head"><div class="rcard-top"><span class="rcard-icon">🍲</span><div class="rcard-info"><p class="rcard-title">山芋と白きくらげの美肌スープ</p><p class="rcard-effect">✨ 肺と肌を潤し、秋の肌荒れと乾燥を内側から防ぎます</p></div><span class="lock-badge">🔒 会員限定</span></div></div><div class="lock-body"><div class="blur-wrap"><p class="blur-text">山芋・白きくらげ・松の実を使ったとろとろスープ。肌が変わる秋の一品。</p></div><div class="lock-cover"><div class="lock-circle">🔒</div><p class="lock-text">会員の方はレシピの続きを読めます</p></div></div></div>
+    </div>
+    <div class="cta-box"><p class="cta-title">🌿 残り4品のレシピを読みたいですか？</p><p class="cta-desc">メンバーシップでは春・夏・秋・冬<br>全ての季節のレシピをお届けしています</p><button class="cta-btn" onclick="alert('noteのメンバーシップページへ移動します')">月額¥500で全レシピを読む</button><p class="cta-note">いつでも解約できます・noteアカウントで参加</p></div>
+  </div>
+
+  <!-- 冬 -->
+  <div class="season-panel" id="panel-winter">
+    <div class="season-header winter">
+      <span class="organ-badge" style="background:#B8CCE0;color:#305080">養う臓器：腎・膀胱</span>
+      <p class="season-title">❄️ 冬のレシピ集（12月〜2月）</p>
+      <p class="season-desc">冬は腎の季節。体を温め、冷え・腰痛・むくみ・気力低下を予防します。旬の食材：黒豆・クルミ・山芋・ニラ・海老・杜仲</p>
+    </div>
+    <div class="recipe-list">
+      <div class="rcard free-card">
+        <div class="rcard-head"><div class="rcard-top"><span class="rcard-icon">🍲</span><div class="rcard-info"><p class="rcard-title">黒豆と黒ごまの腎活ご飯</p><p class="rcard-effect">✨ 腎を補い、冬の疲労感・腰の重さ・髪の衰えを改善します</p></div><span class="free-badge">無料公開</span></div></div>
+        <div class="free-body">
+          <p class="sec-label">材料（2人分）</p>
+          <div class="ing-row"><span class="ing-tag">白米 1合</span><span class="ing-tag">黒豆 大さじ2</span><span class="ing-tag">黒ごま 大さじ1</span><span class="ing-tag">塩 少々</span></div>
+          <p class="sec-label">作り方</p>
+          <ol class="step-ol">
+            <li>黒豆は一晩水に浸しておく</li>
+            <li>白米を研ぎ、黒豆・水・塩を加えて炊く</li>
+            <li>炊き上がったら黒ごまを混ぜてできあがり</li>
+          </ol>
+        </div>
+        <div class="divider-line"></div>
+        <p class="point-box">🌿 薬膳ポイント：黒い食材は腎を補う。黒豆・黒ごまの組み合わせで髪・骨・腰を強化する</p>
+      </div>
+      <div class="rcard"><div class="rcard-head"><div class="rcard-top"><span class="rcard-icon">🍜</span><div class="rcard-info"><p class="rcard-title">生姜と長ねぎの温め鍋</p><p class="rcard-effect">✨ 体の芯から温め、手足の冷えと冬の疲労を回復します</p></div><span class="lock-badge">🔒 会員限定</span></div></div><div class="lock-body"><div class="blur-wrap"><p class="blur-text">生姜・長ねぎ・鶏肉を使った体が芯から温まる鍋。冷えがひどい日に。</p></div><div class="lock-cover"><div class="lock-circle">🔒</div><p class="lock-text">会員の方はレシピの続きを読めます</p></div></div></div>
+      <div class="rcard"><div class="rcard-head"><div class="rcard-top"><span class="rcard-icon">🦐</span><div class="rcard-info"><p class="rcard-title">海老とニラの腎活炒め</p><p class="rcard-effect">✨ 腎陽を補い、冬の気力・体力の低下を回復します</p></div><span class="lock-badge">🔒 会員限定</span></div></div><div class="lock-body"><div class="blur-wrap"><p class="blur-text">海老・ニラ・にんにく・クルミを使った腎を補う炒め物。疲れた冬に。</p></div><div class="lock-cover"><div class="lock-circle">🔒</div><p class="lock-text">会員の方はレシピの続きを読めます</p></div></div></div>
+      <div class="rcard"><div class="rcard-head"><div class="rcard-top"><span class="rcard-icon">🫘</span><div class="rcard-info"><p class="rcard-title">小豆とはとむぎのむくみ取りスープ</p><p class="rcard-effect">✨ 余分な水分を排出し、冬のむくみをすっきり解消します</p></div><span class="lock-badge">🔒 会員限定</span></div></div><div class="lock-body"><div class="blur-wrap"><p class="blur-text">小豆・はとむぎ・昆布のシンプルスープ。毎日続けるとむくみが変わる。</p></div><div class="lock-cover"><div class="lock-circle">🔒</div><p class="lock-text">会員の方はレシピの続きを読めます</p></div></div></div>
+      <div class="rcard"><div class="rcard-head"><div class="rcard-top"><span class="rcard-icon">🌰</span><div class="rcard-info"><p class="rcard-title">クルミとなつめのお汁粉</p><p class="rcard-effect">✨ 腎を温め、冬の腰痛・膝の痛みを和らげます</p></div><span class="lock-badge">🔒 会員限定</span></div></div><div class="lock-body"><div class="blur-wrap"><p class="blur-text">クルミ・なつめ・小豆を使ったほっこり甘い薬膳おやつ。腎を補う定番。</p></div><div class="lock-cover"><div class="lock-circle">🔒</div><p class="lock-text">会員の方はレシピの続きを読めます</p></div></div></div>
+    </div>
+    <div class="cta-box"><p class="cta-title">🌿 残り4品のレシピを読みたいですか？</p><p class="cta-desc">メンバーシップでは春・夏・秋・冬<br>全ての季節のレシピをお届けしています</p><button class="cta-btn" onclick="alert('noteのメンバーシップページへ移動します')">月額¥500で全レシピを読む</button><p class="cta-note">いつでも解約できます・noteアカウントで参加</p></div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <p class="footer-logo">🌿 <span>薬膳</span>キッチン</p>
+  <p class="footer-sub">毎日の食事が、あなたの薬になりますように</p>
+</div>
+
+<script>
+const seasons=['spring','summer','autumn','winter'];
+function switchTab(s){
+  seasons.forEach(x=>{
+    document.getElementById('tab-'+x).className='tab';
+    document.getElementById('panel-'+x).classList.remove('active');
+  });
+  document.getElementById('tab-'+s).className='tab active-'+s;
+  document.getElementById('panel-'+s).classList.add('active');
+  window.scrollTo({top:document.querySelector('.tabs-wrap').offsetTop-10,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
