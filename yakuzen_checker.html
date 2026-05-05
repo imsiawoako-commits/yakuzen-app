@@ -94,6 +94,12 @@ body{font-family:'Hiragino Kaku Gothic Pro','Hiragino Sans','Yu Gothic',sans-ser
 .steps-list{list-style:none;counter-reset:steps}
 .steps-list li{counter-increment:steps;font-size:12px;color:var(--warm-gray);padding:4px 0;padding-left:20px;position:relative;line-height:1.6}
 .steps-list li::before{content:counter(steps);position:absolute;left:0;top:5px;width:14px;height:14px;background:var(--green);color:#fff;font-size:9px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:1}
+.convenience-box{background:#F0F5F0;border:1px solid #B8D8B8;border-radius:var(--radius);padding:1rem 1.25rem;margin:1rem 0}
+.convenience-title{font-size:13px;font-weight:700;color:#3A7A3A;margin-bottom:8px}
+.convenience-item{font-size:12px;color:var(--warm-gray);padding:3px 0;padding-left:18px;position:relative;line-height:1.6}
+.convenience-item::before{content:"🏪";position:absolute;left:0;font-size:11px}
+.disclaimer-box{background:#FFF8F0;border:1px solid #E8C8A0;border-radius:var(--radius-sm);padding:10px 14px;margin-top:1rem;text-align:center}
+.disclaimer-text{font-size:11px;color:var(--warm-gray);line-height:1.7}
 .cta-box{background:var(--amber-light);border:1px solid #E8C89A;border-radius:var(--radius);padding:1.25rem;text-align:center;margin-top:1rem}
 .cta-title{font-size:15px;font-weight:700;color:var(--amber);margin-bottom:6px}
 .cta-sub{font-size:13px;color:var(--warm-gray);margin-bottom:12px;line-height:1.6}
@@ -210,10 +216,17 @@ body{font-family:'Hiragino Kaku Gothic Pro','Hiragino Sans','Yu Gothic',sans-ser
     <div class="divider"></div>
     <p class="section-title">今日から作れる・春のレシピ</p>
     <div id="rRecipes"></div>
+    <div class="convenience-box">
+      <p class="convenience-title">🏪 今日は作れない日のコンビニ・惣菜ヒント</p>
+      <div id="rConvenience"></div>
+    </div>
     <div class="cta-box">
       <p class="cta-title">🌿 もっとレシピを見たいですか？</p>
       <p class="cta-sub">メンバーシップでは体質別・季節別レシピを<br>毎月10〜15品お届けしています</p>
       <button class="btn-cta" onclick="location.href='yakuzen_membership.html'">メンバーシップを見てみる</button>
+    </div>
+    <div class="disclaimer-box">
+      <p class="disclaimer-text">⚠️ アレルギーのある方、現在病院にかかっている方、お薬を服用中の方は、食事内容の変更前に必ず医師・薬剤師にご相談ください。このアプリは医療行為ではありません。</p>
     </div>
     <button class="btn-sub" onclick="restart()" style="margin-top:16px">もう一度チェックする</button>
   </div>
@@ -235,6 +248,7 @@ const questions=[
     {icon:"❤️",label:"赤い・ほてる",sub:"頬や顔が赤め",val:"red"},
     {icon:"🟡",label:"黄色っぽい",sub:"くすんで黄みがある",val:"yellow"},
     {icon:"🫥",label:"暗い・くすむ",sub:"血色が暗め",val:"dark"},
+    {icon:"🙂",label:"普段と変わらない",sub:"特に気にならない",val:"normal"},
   ]},
   {id:"hands",opts:[
     {icon:"🧊",label:"冷たい",sub:"いつも冷えている",val:"cold"},
@@ -264,6 +278,7 @@ const questions=[
 
 const types={
   kekkyo:{name:"血虚タイプ",badge:"血虚",bc:"#FBE8E8",tc:"#A83030",
+    convenience:["ほうれん草のごまあえ・煮びたし","レバー煮・ひじき煮","温かいお蕎麦（卵トッピング）"],
     catchphrase:"栄養とうるおいが不足しているかもしれません",
     reason:"食事の偏りや睡眠不足、目の使いすぎなどが続くと、体を養う「血」が消耗しやすくなることがあります。",
     tips:["今日は早めに休んで、目を休ませてあげましょう","温かい食事をゆっくり味わって食べてみてください"],
@@ -279,6 +294,7 @@ const types={
         steps:["黒豆は一晩水に浸す","なつめと黒豆を水から煮る（弱火30分）","塩で味を整えてできあがり"]},
     ]},
   inkyo:{name:"陰虚タイプ",badge:"陰虚",bc:"#FCE8EC",tc:"#A03050",
+    convenience:["豆腐・冷奴・湯豆腐","卵豆腐・茶碗蒸し","梨・りんごなどの果物"],
     catchphrase:"体の中が少し乾燥しているかもしれません",
     reason:"夜更かしや過労、辛いものの食べすぎなどが続くと、体の「潤い」が消耗されることがあります。",
     tips:["今日は早めに休んで、体をしっかり休ませましょう","水分をこまめに補い、乾燥した場所を避けてみてください"],
@@ -294,6 +310,7 @@ const types={
         steps:["菊花を緑茶で蒸らし5分おく","粉寒天を水に溶かして加熱、溶けたら火を止める","菊花茶・はちみつを混ぜてカップに入れ冷やし固める"]},
     ]},
   netsu:{name:"熱証タイプ",badge:"熱証",bc:"#FDF3E7",tc:"#B05010",
+    convenience:["きゅうりの酢の物・浅漬け","冷やっこ・もずく酢","ざるそば・そうめん"],
     catchphrase:"体に熱がこもっているかもしれません",
     reason:"ストレスや辛いもの・脂っこいものの食べすぎ、睡眠不足などが続くと、体に余分な熱がたまることがあります。",
     tips:["今日は刺激の強い食べ物や飲み物を少し控えてみましょう","深呼吸してストレスを意識的に発散させてみてください"],
@@ -309,6 +326,7 @@ const types={
         steps:["菊花をお湯で蒸らし5分おく","きゅうりは薄切り、豆腐は小さく切る","全て和え、ごま油・醤油で味を整える"]},
     ]},
   kikyo:{name:"気虚タイプ",badge:"気虚",bc:"#EEF3F9",tc:"#305080",
+    convenience:["かぼちゃの煮物・鶏肉のおかず","山芋とろろご飯・おにぎり","温かいうどん・おかゆ"],
     catchphrase:"エネルギーが消耗気味かもしれません",
     reason:"過労や不規則な食事、心配事が続くと、体のエネルギー「気」が不足しやすくなることがあります。",
     tips:["今日は無理せず、休める時間を意識してとりましょう","温かくて消化の良いものを食べて、胃腸をいたわってみてください"],
@@ -324,6 +342,7 @@ const types={
         steps:["かぼちゃはひと口大に切る","なつめ・かぼちゃ・水を鍋で煮る（15分）","柔らかくなったらはちみつを加えて仕上げる"]},
     ]},
   shitsu:{name:"湿証タイプ",badge:"湿証",bc:"#EEF5F0",tc:"#2A6840",
+    convenience:["冷奴・蒸し鶏・ゆで卵","はとむぎ入りご飯・小豆入りおかゆ","きんぴらごぼう・根菜の煮物"],
     catchphrase:"胃腸に余分な水分がたまっているかもしれません",
     reason:"冷たいものの飲みすぎや、甘いもの・脂っこいものの食べすぎで、体に湿気がたまることがあります。",
     tips:["今日は冷たいものや甘いものを少し控えてみましょう","軽く体を動かすと、体の巡りが良くなるかもしれません"],
@@ -339,6 +358,7 @@ const types={
         steps:["小豆は一晩水に浸す","水・小豆・昆布を鍋に入れ弱火で30分煮る","昆布を取り出し塩で味を整える"]},
     ]},
   oketsu:{name:"瘀血タイプ",badge:"瘀血",bc:"#F2EEF9",tc:"#604090",
+    convenience:["青魚の煮付け・さば味噌煮","玉ねぎサラダ・酢の物","黒酢ドリンク・黒豆煮"],
     catchphrase:"血の巡りが滞りがちかもしれません",
     reason:"長時間同じ姿勢でいたり、ストレスや冷えが続いたりすると、血の流れが滞ることがあります。",
     tips:["今日は意識的に体を動かしたり、ストレッチをしてみましょう","温かいものを飲んで、体を内側から温めてみてください"],
@@ -438,6 +458,7 @@ function showResult(){
   document.getElementById('rReason').textContent=t.reason;
   document.getElementById('rTipsBox').style.background=t.bc;
   document.getElementById('rTips').innerHTML=t.tips.map(tip=>`<p class="type-tips-item">${tip}</p>`).join('');
+  document.getElementById('rConvenience').innerHTML=t.convenience.map(c=>`<p class="convenience-item">${c}</p>`).join('');
   document.getElementById('rSigns').innerHTML=t.signs.map(s=>`<span class="sign">${s}</span>`).join('');
   document.getElementById('rFoods').innerHTML=t.foods.map(f=>`<div class="food-item"><span>${f.i}</span><p>${f.n}</p><small>${f.e}</small></div>`).join('');
   document.getElementById('rRecipes').innerHTML=t.recipes.map(r=>`
