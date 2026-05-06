@@ -133,7 +133,10 @@ body{font-family:'Hiragino Kaku Gothic Pro','Hiragino Sans','Yu Gothic',sans-ser
   <div class="container">
     <div class="progress-bar"><div class="progress-fill" style="width:14%"></div></div>
     <p class="step-label">STEP 1 / 6 ・ 舌の状態</p>
-    <p class="question">鏡で舌を見てください。<br>今の状態に近いのはどれですか？</p>
+    <p class="question">鏡で舌を出してみてください。<br>一番近い色・状態を選んでください</p>
+    <div style="background:#F0F5F0;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#5A7A5A;line-height:1.7;">
+      💡 <b>見るポイント：</b>舌の<b>色</b>（白い？赤い？紫っぽい？）と<b>表面</b>（乾いてる？白い膜がある？）を確認してください
+    </div>
     <div class="tongue-grid" id="tongueGrid"></div>
     <button class="btn-main" id="btnTongue" disabled onclick="goTo('s-q1')">次へ</button>
   </div>
@@ -234,12 +237,12 @@ body{font-family:'Hiragino Kaku Gothic Pro','Hiragino Sans','Yu Gothic',sans-ser
 
 <script>
 const tongueData=[
-  {id:"kekkyo_t",label:"淡白舌",desc:"白っぽい\n血色がない",color:"#FFDEDE",stroke:"#C89090",tcm:"kekkyo"},
-  {id:"inkyo_t",label:"紅舌・苔なし",desc:"赤くて\n乾燥気味",color:"#FFBABA",stroke:"#CC6060",tcm:"inkyo"},
-  {id:"netsu_t",label:"紅舌・黄苔",desc:"赤くて\n黄色い苔",color:"#FFF0AA",stroke:"#C8A020",tcm:"netsu"},
-  {id:"ki_t",label:"淡白・白苔",desc:"白っぽく\n白い苔",color:"#E0E8FF",stroke:"#8090CC",tcm:"kikyo"},
-  {id:"shitsu_t",label:"胖大・白苔",desc:"ぽってり\n大きく白苔",color:"#C8E8CC",stroke:"#60A868",tcm:"shitsu"},
-  {id:"oketsu_t",label:"紫がかった舌",desc:"暗紫色\n斑点あり",color:"#E0C8F0",stroke:"#9060C0",tcm:"oketsu"},
+  {id:"kekkyo_t",label:"白っぽい・薄い",desc:"全体が白や\n薄いピンク色",color:"#FFDEDE",stroke:"#C89090",coatColor:null,tcm:"kekkyo"},
+  {id:"inkyo_t",label:"赤くてカサカサ",desc:"赤みが強く\n乾いた感じ",color:"#FF9898",stroke:"#CC6060",coatColor:null,tcm:"inkyo"},
+  {id:"netsu_t",label:"赤くて黄色い膜",desc:"赤くて表面に\n黄色っぽい膜",color:"#FFBABA",stroke:"#C8A020",coatColor:"#F0D060",tcm:"netsu"},
+  {id:"ki_t",label:"白っぽく白い膜",desc:"色が薄く\n白い膜がある",color:"#E0E8FF",stroke:"#8090CC",coatColor:"#E8EEF8",tcm:"kikyo"},
+  {id:"shitsu_t",label:"大きくぽったり",desc:"舌が大きめで\n白い厚い膜",color:"#C8E8CC",stroke:"#60A868",coatColor:"#E0F0E0",tcm:"shitsu"},
+  {id:"oketsu_t",label:"暗い・紫っぽい",desc:"色が暗くて\n紫がかっている",color:"#C8A8D8",stroke:"#9060C0",coatColor:null,tcm:"oketsu"},
 ];
 
 const questions=[
@@ -379,12 +382,16 @@ let tongueScore={},bodyScore={};
 let currentType="";
 
 function makeTongueSVG(d){
-  return`<svg width="52" height="62" viewBox="0 0 52 62" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="26" cy="28" rx="19" ry="24" fill="${d.color}" stroke="${d.stroke}" stroke-width="1.5"/>
-    <ellipse cx="26" cy="46" rx="19" ry="11" fill="${d.color}" stroke="${d.stroke}" stroke-width="1.5"/>
-    <line x1="26" y1="8" x2="26" y2="50" stroke="${d.stroke}" stroke-width="0.8" stroke-dasharray="3,2" opacity="0.6"/>
-    <ellipse cx="18" cy="28" rx="5" ry="7" fill="none" stroke="${d.stroke}" stroke-width="0.5" opacity="0.4"/>
-    <ellipse cx="34" cy="28" rx="5" ry="7" fill="none" stroke="${d.stroke}" stroke-width="0.5" opacity="0.4"/>
+  const coat=d.coatColor?`<ellipse cx="26" cy="26" rx="13" ry="16" fill="${d.coatColor}" opacity="0.7"/>
+    <ellipse cx="26" cy="36" rx="11" ry="6" fill="${d.coatColor}" opacity="0.6"/>`:'';
+  return`<svg width="56" height="66" viewBox="0 0 56 66" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="28" cy="30" rx="20" ry="25" fill="${d.color}" stroke="${d.stroke}" stroke-width="1.5"/>
+    <ellipse cx="28" cy="48" rx="20" ry="12" fill="${d.color}" stroke="${d.stroke}" stroke-width="1.5"/>
+    ${coat}
+    <line x1="28" y1="8" x2="28" y2="54" stroke="${d.stroke}" stroke-width="0.8" stroke-dasharray="3,2" opacity="0.5"/>
+    <ellipse cx="20" cy="28" rx="4" ry="5" fill="none" stroke="${d.stroke}" stroke-width="0.5" opacity="0.35"/>
+    <ellipse cx="36" cy="28" rx="4" ry="5" fill="none" stroke="${d.stroke}" stroke-width="0.5" opacity="0.35"/>
+    <ellipse cx="28" cy="20" rx="3" ry="3" fill="none" stroke="${d.stroke}" stroke-width="0.5" opacity="0.35"/>
   </svg>`;
 }
 
