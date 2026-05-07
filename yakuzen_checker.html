@@ -134,6 +134,9 @@ body{font-family:'Hiragino Kaku Gothic Pro','Hiragino Sans','Yu Gothic',sans-ser
     <div class="progress-bar"><div class="progress-fill" style="width:14%"></div></div>
     <p class="step-label">STEP 1 / 6 ・ 舌の状態</p>
     <p class="question">鏡で舌を出してみてください。<br>一番近い色・状態を選んでください</p>
+    <div style="background:#FDF8F0;border:1px solid #E8D8B8;border-radius:10px;padding:12px 14px;margin-bottom:10px;font-size:12px;color:#6A5A3A;line-height:1.8;">
+      🌿 <b>なぜ舌を見るの？</b><br>中医学では<b>舌は胃の状態を映す鏡</b>と言われています。食べたものを消化する胃の状態が舌の色や表面に現れるため、体質チェックの第一歩として舌を確認します。
+    </div>
     <div style="background:#F0F5F0;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#5A7A5A;line-height:1.7;">
       💡 <b>見るポイント：</b>舌の<b>色</b>（白い？赤い？紫っぽい？）と<b>表面</b>（乾いてる？白い膜がある？）を確認してください
     </div>
@@ -382,16 +385,34 @@ let tongueScore={},bodyScore={};
 let currentType="";
 
 function makeTongueSVG(d){
-  const coat=d.coatColor?`<ellipse cx="26" cy="26" rx="13" ry="16" fill="${d.coatColor}" opacity="0.7"/>
-    <ellipse cx="26" cy="36" rx="11" ry="6" fill="${d.coatColor}" opacity="0.6"/>`:'';
-  return`<svg width="56" height="66" viewBox="0 0 56 66" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="28" cy="30" rx="20" ry="25" fill="${d.color}" stroke="${d.stroke}" stroke-width="1.5"/>
-    <ellipse cx="28" cy="48" rx="20" ry="12" fill="${d.color}" stroke="${d.stroke}" stroke-width="1.5"/>
-    ${coat}
-    <line x1="28" y1="8" x2="28" y2="54" stroke="${d.stroke}" stroke-width="0.8" stroke-dasharray="3,2" opacity="0.5"/>
-    <ellipse cx="20" cy="28" rx="4" ry="5" fill="none" stroke="${d.stroke}" stroke-width="0.5" opacity="0.35"/>
-    <ellipse cx="36" cy="28" rx="4" ry="5" fill="none" stroke="${d.stroke}" stroke-width="0.5" opacity="0.35"/>
-    <ellipse cx="28" cy="20" rx="3" ry="3" fill="none" stroke="${d.stroke}" stroke-width="0.5" opacity="0.35"/>
+  const coat=d.coatColor?`<ellipse cx="28" cy="28" rx="14" ry="18" fill="${d.coatColor}" opacity="0.65"/>
+    <ellipse cx="28" cy="40" rx="12" ry="7" fill="${d.coatColor}" opacity="0.55"/>`:'';
+  const cracks=d.tcm==='inkyo'?`
+    <line x1="22" y1="30" x2="18" y2="38" stroke="${d.stroke}" stroke-width="1" opacity="0.5"/>
+    <line x1="34" y1="28" x2="38" y2="36" stroke="${d.stroke}" stroke-width="1" opacity="0.5"/>
+    <line x1="24" y1="44" x2="20" y2="52" stroke="${d.stroke}" stroke-width="1" opacity="0.45"/>
+    <line x1="36" y1="42" x2="40" y2="50" stroke="${d.stroke}" stroke-width="1" opacity="0.45"/>`:'';
+  const spots=d.tcm==='oketsu'?`
+    <circle cx="18" cy="28" r="2.5" fill="${d.stroke}" opacity="0.45"/>
+    <circle cx="38" cy="34" r="2" fill="${d.stroke}" opacity="0.4"/>
+    <circle cx="24" cy="42" r="2" fill="${d.stroke}" opacity="0.4"/>
+    <circle cx="36" cy="22" r="1.5" fill="${d.stroke}" opacity="0.4"/>`:'';
+  const toothmarks=d.tcm==='shitsu'?`
+    <path d="M8 42 Q10 46 8 50" stroke="${d.stroke}" stroke-width="1.5" fill="none" opacity="0.45"/>
+    <path d="M8 52 Q10 56 8 60" stroke="${d.stroke}" stroke-width="1.5" fill="none" opacity="0.4"/>
+    <path d="M48 42 Q46 46 48 50" stroke="${d.stroke}" stroke-width="1.5" fill="none" opacity="0.45"/>
+    <path d="M48 52 Q46 56 48 60" stroke="${d.stroke}" stroke-width="1.5" fill="none" opacity="0.4"/>`:'';
+  const rx=d.tcm==='shitsu'?22:19;
+  const ry1=d.tcm==='shitsu'?27:24;
+  const ry2=d.tcm==='shitsu'?13:11;
+  return`<svg width="60" height="76" viewBox="0 0 60 76" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="30" cy="33" rx="${rx}" ry="${ry1}" fill="${d.color}" stroke="${d.stroke}" stroke-width="1.8"/>
+    <ellipse cx="30" cy="54" rx="${rx}" ry="${ry2}" fill="${d.color}" stroke="${d.stroke}" stroke-width="1.8"/>
+    ${coat}${cracks}${spots}${toothmarks}
+    <line x1="30" y1="10" x2="30" y2="62" stroke="${d.stroke}" stroke-width="0.8" stroke-dasharray="3,2" opacity="0.45"/>
+    <ellipse cx="21" cy="30" rx="5" ry="6" fill="none" stroke="${d.stroke}" stroke-width="0.6" opacity="0.3"/>
+    <ellipse cx="39" cy="30" rx="5" ry="6" fill="none" stroke="${d.stroke}" stroke-width="0.6" opacity="0.3"/>
+    <ellipse cx="30" cy="20" rx="4" ry="4" fill="none" stroke="${d.stroke}" stroke-width="0.6" opacity="0.3"/>
   </svg>`;
 }
 
