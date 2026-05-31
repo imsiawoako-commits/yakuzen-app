@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CML食事サポート | 慢性骨髄性白血病の方のための薬膳ガイド</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --green:#5C8A6B;--green-light:#EEF5F0;--green-mid:#C4DCC9;
+  --amber:#C8873A;--amber-light:#FDF3E7;
+  --red-soft:#D4706A;--red-light:#FBF0EF;
+  --blue-soft:#5A7FA8;--blue-light:#EEF3F9;
+  --teal:#4A8A8A;--teal-light:#EEF5F5;
+  --cream:#FDFBF7;--warm-gray:#6B6560;--dark:#2C2820;
+  --border:#E8E2D8;--radius:14px;--radius-sm:8px;
+}
+body{font-family:'Hiragino Kaku Gothic Pro','Hiragino Sans','Yu Gothic',sans-serif;background:var(--cream);color:var(--dark);min-height:100vh;line-height:1.7}
+.screen{display:none;min-height:100vh;padding:2rem 1rem;animation:fadeIn 0.4s ease}
+.screen.active{display:flex;flex-direction:column;align-items:center}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.container{width:100%;max-width:560px}
+
+.welcome-icon{font-size:48px;margin-bottom:1rem;text-align:center}
+.welcome-title{font-size:24px;font-weight:700;text-align:center;color:var(--dark);margin-bottom:0.5rem;line-height:1.4}
+.welcome-sub{font-size:13px;color:var(--warm-gray);text-align:center;margin-bottom:1.5rem;line-height:1.8}
+.welcome-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:1.5rem}
+.step-item{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--teal);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-text{font-size:14px;color:var(--dark)}
+
+.btn-main{width:100%;padding:16px;background:var(--teal);color:#fff;border:none;border-radius:var(--radius);font-size:16px;font-weight:700;cursor:pointer;transition:opacity 0.15s}
+.btn-main:hover{opacity:0.85}
+.btn-main:disabled{opacity:0.4;cursor:not-allowed}
+.btn-sub{width:100%;padding:12px;background:transparent;color:var(--warm-gray);border:1px solid var(--border);border-radius:var(--radius);font-size:14px;cursor:pointer;margin-top:10px;transition:background 0.15s}
+.btn-sub:hover{background:#f5f2ec}
+
+.progress-bar{width:100%;height:4px;background:var(--border);border-radius:2px;margin-bottom:1.5rem;overflow:hidden}
+.progress-fill{height:100%;background:var(--teal);border-radius:2px;transition:width 0.4s ease}
+.step-label{font-size:11px;color:var(--warm-gray);font-weight:600;letter-spacing:0.08em;margin-bottom:6px;text-align:center}
+.question{font-size:18px;font-weight:700;color:var(--dark);margin-bottom:1.25rem;text-align:center;line-height:1.5}
+
+.tongue-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem}
+.tongue-card{border:2px solid var(--border);border-radius:var(--radius);padding:14px 8px;cursor:pointer;text-align:center;background:#fff;transition:all 0.15s}
+.tongue-card:hover{border-color:var(--green-mid);background:var(--green-light)}
+.tongue-card.selected{border-color:var(--teal);background:var(--teal-light)}
+.tongue-name{font-size:12px;font-weight:700;color:var(--dark);margin-top:8px}
+.tongue-desc{font-size:10px;color:var(--warm-gray);margin-top:2px;line-height:1.4}
+
+.opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem}
+.opt-card{border:2px solid var(--border);border-radius:var(--radius);padding:14px 12px;cursor:pointer;background:#fff;transition:all 0.15s;text-align:left}
+.opt-card:hover{border-color:var(--green-mid);background:var(--green-light)}
+.opt-card.selected{border-color:var(--teal);background:var(--teal-light)}
+.opt-icon{font-size:24px;margin-bottom:6px;display:block}
+.opt-label{font-size:13px;font-weight:700;color:var(--dark)}
+.opt-sub{font-size:11px;color:var(--warm-gray);margin-top:2px}
+
+/* Avoid box - prominent warning */
+.avoid-box{background:#FFF0F0;border:2px solid #E8A0A0;border-radius:var(--radius);padding:1rem 1.25rem;margin:1rem 0}
+.avoid-title{font-size:14px;font-weight:700;color:#C04040;margin-bottom:10px}
+.avoid-item{font-size:12px;color:#6B3A3A;padding:4px 0;padding-left:22px;position:relative;line-height:1.6}
+.avoid-item::before{content:"⚠️";position:absolute;left:0;font-size:11px}
+
+/* Medicine reminder */
+.medicine-box{background:#EEF3F9;border:1px solid #B8CCE4;border-radius:var(--radius);padding:1rem 1.25rem;margin:1rem 0}
+.medicine-title{font-size:13px;font-weight:700;color:#3A5A8A;margin-bottom:8px}
+.medicine-item{font-size:12px;color:#4A5A6A;padding:3px 0;padding-left:20px;position:relative;line-height:1.6}
+.medicine-item::before{content:"💊";position:absolute;left:0;font-size:11px}
+
+.result-header{text-align:center;margin-bottom:1.5rem}
+.type-badge{display:inline-block;font-size:12px;font-weight:700;padding:5px 16px;border-radius:20px;margin-bottom:10px}
+.type-name{font-size:24px;font-weight:700;color:var(--dark);margin-bottom:6px}
+.type-desc{font-size:14px;color:var(--warm-gray);line-height:1.8}
+.type-catchphrase{font-size:18px;font-weight:700;color:var(--dark);margin:10px 0 6px;line-height:1.5}
+.type-reason-box{background:#f9f7f3;border-radius:var(--radius-sm);padding:12px 14px;margin:10px 0;text-align:left}
+.type-reason-label{font-size:11px;font-weight:700;color:var(--warm-gray);margin-bottom:4px}
+.type-reason-text{font-size:13px;color:var(--dark);line-height:1.7}
+.type-tips-box{border-radius:var(--radius-sm);padding:12px 14px;margin:10px 0;text-align:left}
+.type-tips-label{font-size:11px;font-weight:700;color:var(--warm-gray);margin-bottom:6px}
+.type-tips-item{font-size:13px;color:var(--dark);line-height:1.7;padding:4px 0;padding-left:20px;position:relative}
+.type-tips-item::before{content:"🌿";position:absolute;left:0;font-size:12px}
+
+.section-title{font-size:12px;font-weight:700;color:var(--warm-gray);letter-spacing:0.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.signs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.5rem}
+.sign{font-size:12px;padding:4px 10px;border-radius:20px;background:#f5f2ec;color:var(--warm-gray);border:1px solid var(--border)}
+.food-row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:1.5rem}
+.food-item{text-align:center;background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 4px}
+.food-item span{font-size:20px;display:block;margin-bottom:4px}
+.food-item p{font-size:11px;font-weight:700;color:var(--dark)}
+.food-item small{font-size:9px;color:var(--warm-gray)}
+
+.recipe-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:10px}
+.recipe-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.recipe-title{font-size:15px;font-weight:700;color:var(--dark)}
+.recipe-badge{font-size:10px;padding:3px 8px;border-radius:20px;white-space:nowrap;margin-left:8px;flex-shrink:0}
+.recipe-effect{font-size:12px;color:var(--warm-gray);margin-bottom:10px}
+.recipe-section{font-size:11px;font-weight:700;color:var(--warm-gray);margin-bottom:4px}
+.ingredients{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.ing-tag{font-size:11px;background:var(--teal-light);color:var(--teal);padding:3px 8px;border-radius:4px;border:1px solid #B8D8D8}
+.steps-list{list-style:none;counter-reset:steps}
+.steps-list li{counter-increment:steps;font-size:12px;color:var(--warm-gray);padding:4px 0;padding-left:20px;position:relative;line-height:1.6}
+.steps-list li::before{content:counter(steps);position:absolute;left:0;top:5px;width:14px;height:14px;background:var(--teal);color:#fff;font-size:9px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:1}
+
+.fruit-box{background:#FFF8F0;border:1px solid #E8C89A;border-radius:var(--radius);padding:1rem 1.25rem;margin:1rem 0}
+.fruit-title{font-size:13px;font-weight:700;color:#C8873A;margin-bottom:8px}
+.fruit-item{font-size:12px;color:#6B5A3A;padding:3px 0;padding-left:20px;position:relative;line-height:1.6}
+.fruit-item::before{content:"🍎";position:absolute;left:0;font-size:11px}
+
+.divider{height:1px;background:var(--border);margin:1.25rem 0}
+.note-text{font-size:11px;color:var(--warm-gray);text-align:center;margin-top:8px}
+</style>
+</head>
+<body>
+
+<!-- SCREEN 1: Welcome -->
+<div class="screen active" id="s-welcome">
+  <div class="container">
+    <div class="welcome-icon">🌿</div>
+    <h1 class="welcome-title">CML食事サポート<br>薬膳チェック</h1>
+    <p class="welcome-sub">慢性骨髄性白血病（CML）の治療中の方と<br>そのご家族のための食事ガイドです。<br>今の体の状態に合った食材とレシピをお届けします。</p>
+
+    <div style="background:#EEF5F5;border:1px solid #B8D8D8;border-radius:12px;padding:12px 14px;margin-bottom:1.5rem;">
+      <p style="font-size:12px;font-weight:700;color:var(--teal);margin-bottom:8px;">🌿 このアプリの考え方</p>
+      <p style="font-size:12px;color:var(--warm-gray);line-height:1.8;">「嫌いなものを無理して食べなくていい。好きなものを腹八分で。」<br>完璧を目指さず、食事を楽しみながら体をサポートすることを大切にしています。</p>
+    </div>
+
+    <div class="welcome-steps">
+      <div class="step-item"><div class="step-num">1</div><div class="step-text">🪞 舌の状態を選ぶ</div></div>
+      <div class="step-item"><div class="step-num">2</div><div class="step-text">💭 今の体の感覚を選ぶ（4問）</div></div>
+      <div class="step-item"><div class="step-num">3</div><div class="step-text">🍲 体に合うレシピと食材がわかる</div></div>
+    </div>
+    <button class="btn-main" onclick="goTo('s-tongue')">チェックをはじめる</button>
+    <p class="note-text">所要時間：約1〜2分</p>
+  </div>
+</div>
+
+<!-- SCREEN 2: Tongue -->
+<div class="screen" id="s-tongue">
+  <div class="container">
+    <div class="progress-bar"><div class="progress-fill" style="width:16%"></div></div>
+    <p class="step-label">STEP 1 / 5 ・ 舌の状態</p>
+    <p class="question">鏡で舌を出してみてください。<br>一番近い状態を選んでください</p>
+    <div style="background:#FDF8F0;border:1px solid #E8D8B8;border-radius:10px;padding:12px 14px;margin-bottom:10px;font-size:12px;color:#6A5A3A;line-height:1.8;">
+      🌿 <b>なぜ舌を見るの？</b><br>中医学では<b>舌は胃の状態を映す鏡</b>と言われています。治療中の体の変化が舌にも現れます。
+    </div>
+    <div class="tongue-grid" id="tongueGrid"></div>
+    <button class="btn-main" id="btnTongue" disabled onclick="goTo('s-q1')">次へ</button>
+  </div>
+</div>
+
+<!-- SCREEN 3: Q1 症状 -->
+<div class="screen" id="s-q1">
+  <div class="container">
+    <div class="progress-bar"><div class="progress-fill" style="width:32%"></div></div>
+    <p class="step-label">STEP 2 / 5 ・ 今の症状</p>
+    <p class="question">今、一番気になることは？</p>
+    <div class="opt-grid" id="q1opts"></div>
+    <button class="btn-main" id="btnQ1" disabled onclick="goTo('s-q2')">次へ</button>
+  </div>
+</div>
+
+<!-- SCREEN 4: Q2 食欲 -->
+<div class="screen" id="s-q2">
+  <div class="container">
+    <div class="progress-bar"><div class="progress-fill" style="width:48%"></div></div>
+    <p class="step-label">STEP 3 / 5 ・ 食欲</p>
+    <p class="question">今の食欲は？</p>
+    <div class="opt-grid" id="q2opts"></div>
+    <button class="btn-main" id="btnQ2" disabled onclick="goTo('s-q3')">次へ</button>
+  </div>
+</div>
+
+<!-- SCREEN 5: Q3 手足 -->
+<div class="screen" id="s-q3">
+  <div class="container">
+    <div class="progress-bar"><div class="progress-fill" style="width:64%"></div></div>
+    <p class="step-label">STEP 4 / 5 ・ 手足の温度</p>
+    <p class="question">手足の温度は？</p>
+    <div class="opt-grid" id="q3opts"></div>
+    <button class="btn-main" id="btnQ3" disabled onclick="goTo('s-q4')">次へ</button>
+  </div>
+</div>
+
+<!-- SCREEN 6: Q4 口 -->
+<div class="screen" id="s-q4">
+  <div class="container">
+    <div class="progress-bar"><div class="progress-fill" style="width:80%"></div></div>
+    <p class="step-label">STEP 5 / 5 ・ 口の感覚</p>
+    <p class="question">口の中の感覚は？</p>
+    <div class="opt-grid" id="q4opts"></div>
+    <button class="btn-main" id="btnQ4" disabled onclick="showResult()">結果を見る</button>
+  </div>
+</div>
+
+<!-- SCREEN: Result -->
+<div class="screen" id="s-result">
+  <div class="container">
+    <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+
+    <div class="result-header">
+      <span class="type-badge" id="rBadge"></span>
+      <p class="type-name" id="rName"></p>
+      <p class="type-catchphrase" id="rCatchphrase"></p>
+      <p class="type-desc" id="rDesc"></p>
+      <div class="type-reason-box">
+        <p class="type-reason-label">📖 今の体の状態</p>
+        <p class="type-reason-text" id="rReason"></p>
+      </div>
+      <div class="type-tips-box">
+        <p class="type-tips-label">☀️ 今日の過ごし方のポイント</p>
+        <div id="rTips"></div>
+      </div>
+    </div>
+
+    <!-- 薬の飲み方リマインダー -->
+    <div class="medicine-box">
+      <p class="medicine-title">💊 お薬を飲む時のポイント</p>
+      <div class="medicine-item">必ず食後に服用する（吐き気が大幅に減ります）</div>
+      <div class="medicine-item">コップ1杯以上の水で飲む</div>
+      <div class="medicine-item">グレープフルーツジュースは一緒に飲まない</div>
+    </div>
+
+    <!-- 避ける食材 -->
+    <div class="avoid-box">
+      <p class="avoid-title">⚠️ CML治療中に避けてほしい食材</p>
+      <div class="avoid-item">刺身・生魚・生肉・生卵（感染予防のため）</div>
+      <div class="avoid-item">グレープフルーツ・ザボン（薬の効果に影響）</div>
+      <div class="avoid-item">干しいも（カビが生えやすく免疫低下時は危険）</div>
+      <div class="avoid-item">薄皮の果物はよく洗うか加熱してから食べる</div>
+      <div class="avoid-item">アルコール（肝臓への負担を増やす）</div>
+      <div class="avoid-item">白砂糖・甘い加工食品（がん細胞は糖を好みます）</div>
+    </div>
+
+    <!-- 砂糖について -->
+    <div style="background:#F9F5FF;border:1px solid #D8C8F0;border-radius:14px;padding:1rem 1.25rem;margin:0.5rem 0 1rem;">
+      <p style="font-size:13px;font-weight:700;color:#6A4A8A;margin-bottom:8px;">🍯 砂糖の代わりに使えるもの</p>
+      <p style="font-size:12px;color:#6B6560;line-height:1.8;margin-bottom:8px;">がん細胞は糖をエネルギー源にしやすいため、白砂糖はなるべく控えましょう。甘みが欲しいときはこちらを。</p>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="font-size:12px;color:#5A4A6A;padding-left:20px;position:relative;line-height:1.6;"><span style="position:absolute;left:0;">🌾</span><b>みりん（少量）</b>：血糖値の上昇が緩やか。料理の甘みに</div>
+        <div style="font-size:12px;color:#5A4A6A;padding-left:20px;position:relative;line-height:1.6;"><span style="position:absolute;left:0;">✨</span><b>希少糖（アルロース）</b>：血糖値をほぼ上げない。スーパーで購入可</div>
+        <div style="font-size:12px;color:#5A4A6A;padding-left:20px;position:relative;line-height:1.6;"><span style="position:absolute;left:0;">🍯</span><b>はちみつ（少量）</b>：自然な甘み。加熱せずそのまま使う</div>
+        <div style="font-size:12px;color:#5A4A6A;padding-left:20px;position:relative;line-height:1.6;"><span style="position:absolute;left:0;">🍎</span><b>果物の甘み（加熱）</b>：コンポートなど加熱した果物の自然な甘さ</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <p class="section-title">今日の体のサイン</p>
+    <div class="signs" id="rSigns"></div>
+    <p class="section-title">今日おすすめの食材</p>
+    <div class="food-row" id="rFoods"></div>
+
+    <div class="divider"></div>
+    <p class="section-title">誰でも簡単に作れるレシピ</p>
+    <div id="rRecipes"></div>
+
+    <!-- コンビニ・惣菜ヒント -->
+    <div style="background:#F0F5F0;border:1px solid #B8D8B8;border-radius:14px;padding:1rem 1.25rem;margin:1rem 0;">
+      <p style="font-size:13px;font-weight:700;color:#3A7A3A;margin-bottom:8px;">🏪 今日は作れない日のコンビニ・惣菜ヒント</p>
+      <p style="font-size:12px;color:#5A7A5A;margin-bottom:10px;line-height:1.7;">コンビニを全否定しません。忙しい日や体がしんどい日は上手に使いましょう。</p>
+      <div style="margin-bottom:8px;">
+        <p style="font-size:11px;font-weight:700;color:#3A7A3A;margin-bottom:6px;">✅ 選んで良いもの</p>
+        <div style="font-size:12px;color:#5A6A5A;padding:3px 0 3px 20px;position:relative;line-height:1.6;"><span style="position:absolute;left:0;">🍙</span>おにぎり（鮭・梅・昆布など シンプルな具）</div>
+        <div style="font-size:12px;color:#5A6A5A;padding:3px 0 3px 20px;position:relative;line-height:1.6;"><span style="position:absolute;left:0;">🥚</span>ゆで卵・温泉卵（加熱済みのもの）</div>
+        <div style="font-size:12px;color:#5A6A5A;padding:3px 0 3px 20px;position:relative;line-height:1.6;"><span style="position:absolute;left:0;">🫘</span>豆腐・納豆（加熱して食べるとより安心）</div>
+        <div style="font-size:12px;color:#5A6A5A;padding:3px 0 3px 20px;position:relative;line-height:1.6;"><span style="position:absolute;left:0;">🐟</span>焼き魚・煮魚の惣菜（しっかり加熱されたもの）</div>
+        <div style="font-size:12px;color:#5A6A5A;padding:3px 0 3px 20px;position:relative;line-height:1.6;"><span style="position:absolute;left:0;">🍵</span>温かいお茶・みそ汁（体を冷やさない）</div>
+        <div style="font-size:12px;color:#5A6A5A;padding:3px 0 3px 20px;position:relative;line-height:1.6;"><span style="position:absolute;left:0;">🥣</span>レトルトのお粥・雑炊（食欲がない日に）</div>
+      </div>
+      <div>
+        <p style="font-size:11px;font-weight:700;color:#C04040;margin-bottom:6px;">❌ コンビニでも避けてほしいもの</p>
+        <div style="font-size:12px;color:#6A4A4A;padding:3px 0 3px 20px;position:relative;line-height:1.6;"><span style="position:absolute;left:0;">🚫</span>刺身・生魚のお惣菜・海鮮系パック</div>
+        <div style="font-size:12px;color:#6A4A4A;padding:3px 0 3px 20px;position:relative;line-height:1.6;"><span style="position:absolute;left:0;">🚫</span>グレープフルーツジュース</div>
+        <div style="font-size:12px;color:#6A4A4A;padding:3px 0 3px 20px;position:relative;line-height:1.6;"><span style="position:absolute;left:0;">🚫</span>干しいも・生ものを含む和菓子</div>
+        <div style="font-size:12px;color:#6A4A4A;padding:3px 0 3px 20px;position:relative;line-height:1.6;"><span style="position:absolute;left:0;">🚫</span>砂糖たっぷりの甘い飲み物・スイーツ</div>
+      </div>
+    </div>
+
+    <!-- 果物好きのために -->
+    <div class="fruit-box">
+      <p class="fruit-title">🍎 果物が好きな方へ ── 加熱すれば食べられます</p>
+      <div class="fruit-item">りんごのコンポート（皮をむいてはちみつや希少糖で煮る・10分）</div>
+      <div class="fruit-item">焼きバナナ（フライパンで両面2分ずつ・はちみつをかけても）</div>
+      <div class="fruit-item">洋梨の蒸し煮（柔らかく甘みが増して食べやすい）</div>
+      <div class="fruit-item">みかん缶・白桃缶（缶詰は加熱済みなのでそのまま食べられます）</div>
+    </div>
+
+    <!-- ホッティー薬店 -->
+    <div style="background:#FFF8F0;border:1px solid #E8C89A;border-radius:14px;padding:1rem 1.25rem;margin:1rem 0;">
+      <p style="font-size:13px;font-weight:700;color:#C8873A;margin-bottom:6px;">🧂 薬膳に役立つ おすすめ調味料</p>
+      <p style="font-size:12px;color:#6B6560;line-height:1.7;margin-bottom:10px;">「薬に頼らず体質改善」をコンセプトに、ミネラル豊富な天然塩や体に優しい調味料を取り扱うホッティー薬店さんをご紹介します。治療中こそ、調味料の質を見直してみませんか？</p>
+      <a href="https://hottyyakuten.shop-pro.jp/" target="_blank" style="display:block;text-align:center;background:#C8873A;color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;">🏪 天然塩のホッティー薬店 オンラインショップ</a>
+    </div>
+
+    <!-- さおり薬膳 -->
+    <div style="background:#EEF5F0;border:1px solid #B8D8B8;border-radius:14px;padding:1rem 1.25rem;margin:1rem 0;">
+      <p style="font-size:13px;font-weight:700;color:#3A7A3A;margin-bottom:6px;">🍽️ 本物の薬膳を食べてみたいなら</p>
+      <div style="background:#fff;border-radius:10px;padding:12px 14px;margin-bottom:10px;">
+        <p style="font-size:14px;font-weight:700;color:#2C2820;margin-bottom:6px;">さおり薬膳</p>
+        <p style="font-size:12px;color:#6B6560;line-height:1.8;margin-bottom:0;">
+          📍 埼玉県東松山市<br>
+          📅 毎月第2木曜日 11:00〜16:00<br>
+          💴 料理のみ1,000円 / デザート付き1,500円<br>
+          📸 Instagram：@ryosaori
+        </p>
+      </div>
+      <p style="font-size:11px;color:#5A7A5A;margin-bottom:8px;">ご予約・詳細はFacebookで「さおり薬膳」を検索してください</p>
+      <a href="https://www.facebook.com/search/top?q=%E3%81%95%E3%81%8A%E3%82%8A%E8%96%AC%E8%86%B3" target="_blank" style="display:block;text-align:center;background:#1877F2;color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;">📘 Facebookで「さおり薬膳」を検索</a>
+    </div>
+
+    <div style="background:#FFF8F0;border:1px solid #E8C8A0;border-radius:var(--radius-sm);padding:10px 14px;margin-top:1rem;text-align:center">
+      <p style="font-size:11px;color:var(--warm-gray);line-height:1.7">⚠️ このアプリは医療行為ではありません。食事の変更は必ず主治医・薬剤師にご相談ください。</p>
+    </div>
+
+    <button class="btn-sub" onclick="goTo('s-welcome');resetAll()">もう一度チェックする</button>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+const tongues = [
+  {id:'pale', emoji:'🤍', name:'白っぽい・淡い', desc:'気力・血が不足気味', scores:{qi:2,blood:2}},
+  {id:'pink', emoji:'🩷', name:'ピンク・淡紅色', desc:'比較的バランスが良い', scores:{balanced:2}},
+  {id:'red', emoji:'❤️', name:'赤い・鮮やか', desc:'体に熱がこもりやすい', scores:{heat:2}},
+  {id:'purple', emoji:'💜', name:'暗い・紫がかった', desc:'血の巡りが滞りやすい', scores:{stasis:2}},
+  {id:'white_coat', emoji:'🫙', name:'白い膜がある', desc:'冷え・水分が多い', scores:{damp:2,cold:1}},
+  {id:'yellow_coat', emoji:'💛', name:'黄色い膜がある', desc:'熱・炎症が気になる', scores:{heat:2,damp:1}},
+];
+
+const q1opts = [
+  {id:'nausea', icon:'🤢', label:'吐き気・胃の不快感', sub:'食欲もない', scores:{spleen:3}},
+  {id:'edema', icon:'💧', label:'むくみ・重だるい', sub:'体が重い感じ', scores:{damp:3}},
+  {id:'fatigue', icon:'😴', label:'疲れやすい・だるい', sub:'息切れもある', scores:{qi:3}},
+  {id:'hot', icon:'🔥', label:'ほてり・口の苦み', sub:'熱っぽい感じ', scores:{heat:3}},
+  {id:'none', icon:'😊', label:'特に気になることはない', sub:'比較的調子が良い', scores:{balanced:2}},
+];
+
+const q2opts = [
+  {id:'no_appetite', icon:'😶', label:'ほとんど食べられない', sub:'見るのも辛い', scores:{spleen:2}},
+  {id:'little', icon:'🍚', label:'少しなら食べられる', sub:'無理せず少量で', scores:{spleen:1}},
+  {id:'normal', icon:'🍱', label:'普通に食べられる', sub:'あまり変化なし', scores:{balanced:2}},
+  {id:'want_cold', icon:'🧊', label:'冷たいものが飲みたい', sub:'のどが渇く', scores:{heat:2}},
+];
+
+const q3opts = [
+  {id:'cold', icon:'🥶', label:'冷たい・冷える', sub:'特に冬は辛い', scores:{cold:2,qi:1}},
+  {id:'warm', icon:'🌡️', label:'温かい・ほてる', sub:'暑がりになった', scores:{heat:2}},
+  {id:'swollen', icon:'💦', label:'むくんでいる', sub:'靴がきつい', scores:{damp:2}},
+  {id:'normal', icon:'🤲', label:'普通', sub:'気にならない', scores:{balanced:1}},
+];
+
+const q4opts = [
+  {id:'bitter', icon:'😬', label:'苦い・変な味がする', sub:'口の中が気持ち悪い', scores:{heat:2,spleen:1}},
+  {id:'dry', icon:'🏜️', label:'口が乾く', sub:'水をよく飲む', scores:{yin:2}},
+  {id:'bland', icon:'😶', label:'味がしない・薄い', sub:'食べ物がおいしくない', scores:{spleen:2,qi:1}},
+  {id:'normal', icon:'😊', label:'普通', sub:'特に気にならない', scores:{balanced:1}},
+];
+
+// ===== RESULT TYPES =====
+const types = {
+  spleen: {
+    badge:'胃腸ケアタイプ', badgeColor:'#EEF5F5', badgeTextColor:'#3A7A7A',
+    name:'胃腸を整えることが一番大切な時期',
+    catchphrase:'まず胃腸に優しく、少しずつ栄養を届けよう',
+    desc:'吐き気や食欲不振は、治療初期によく現れるサインです。無理せず、胃腸に優しい食材から始めましょう。',
+    reason:'治療薬が体に入ることで、胃腸の働きが一時的に落ちやすくなります。中医学では「脾胃（ひい）が弱っている」状態。少量ずつ、消化しやすいものを選ぶことが回復への第一歩です。',
+    tips:['一度に食べすぎない。少量を何回かに分けて食べる','温かいものを中心に。冷たい食べ物・飲み物は避ける','薬は少しでも食べてから飲むと吐き気が減ります'],
+    signs:['食欲不振','吐き気','胃の重さ','口の不快感','疲労感'],
+    foods:[
+      {emoji:'🌾', name:'山芋', sub:'胃を守る'},
+      {emoji:'🥣', name:'お粥', sub:'消化に優しい'},
+      {emoji:'🫚', name:'豆腐', sub:'タンパク補給'},
+      {emoji:'🧅', name:'かぼちゃ', sub:'胃を補う'},
+      {emoji:'🫚', name:'生姜', sub:'吐き気止め'},
+    ],
+    recipes:[
+      {
+        title:'山芋とろろ粥',
+        badge:'消化◎',badgeColor:'#EEF5F5',badgeText:'#3A7A7A',
+        effect:'胃粘膜を守り、消化吸収を助ける',
+        ingredients:['お米（またはご飯）','山芋50g','だし汁300ml','塩少々','醤油小さじ1'],
+        steps:['だし汁を火にかけ、お粥を作る（またはご飯を入れて煮る）','山芋は皮をむいてすりおろす','お粥が炊けたら火を止め、とろろをのせる','塩・醤油で味を整える']
+      },
+      {
+        title:'生姜入り鶏スープ',
+        badge:'吐き気◎',badgeColor:'#FDF3E7',badgeText:'#C8873A',
+        effect:'吐き気を和らげ、気力を補う',
+        ingredients:['鶏もも肉100g','生姜（薄切り）4枚','水400ml','醤油大さじ1','塩少々'],
+        steps:['鶏肉を一口大に切る','水と生姜を鍋に入れ火にかける','沸騰したら鶏肉を入れ、弱火で15分（中まで火を通す）','醤油・塩で味を整える']
+      },
+    ],
+  },
+  qi: {
+    badge:'気力補充タイプ', badgeColor:'#F2EEF9', badgeTextColor:'#6A4A8A',
+    name:'気力を補い、疲れを取る時期',
+    catchphrase:'無理せず、体が喜ぶ食事で元気を取り戻そう',
+    desc:'だるさや疲れやすさは「気（き）」が不足しているサインです。エネルギーを作る食材を積極的に取り入れましょう。',
+    reason:'中医学では「気」は体を動かす根本のエネルギー。治療によって気が消耗しやすくなっています。気を補う食材で、少しずつエネルギーを蓄えていきましょう。',
+    tips:['無理に動かず、体を休めることも治療の一部','温かい食事を1日3回、できれば決まった時間に','消化の良いものを選び、冷たい飲み物を控える'],
+    signs:['疲れやすい','息切れ','だるさ','声が小さくなる','顔色が悪い'],
+    foods:[
+      {emoji:'🍗', name:'鶏肉', sub:'気を補う'},
+      {emoji:'🐟', name:'鮭', sub:'エネルギー補給'},
+      {emoji:'🫘', name:'黒豆', sub:'腎を補う'},
+      {emoji:'🥕', name:'にんじん', sub:'血を補う'},
+      {emoji:'🌾', name:'山芋', sub:'疲労回復'},
+    ],
+    recipes:[
+      {
+        title:'鶏とかぼちゃの煮物',
+        badge:'気力◎',badgeColor:'#F2EEF9',badgeText:'#6A4A8A',
+        effect:'気を補い、体全体の元気を回復させる',
+        ingredients:['鶏もも肉150g','かぼちゃ200g','だし汁200ml','醤油大さじ1.5','みりん大さじ1','砂糖小さじ1'],
+        steps:['鶏肉・かぼちゃを一口大に切る','鍋に全て入れて中火にかける','沸騰したら弱火にしてふたをし、15分煮る','かぼちゃが柔らかくなったら完成']
+      },
+      {
+        title:'鮭とはと麦のスープ',
+        badge:'むくみ◎',badgeColor:'#EEF5F5',badgeText:'#3A7A7A',
+        effect:'気力を補いながらむくみも取る',
+        ingredients:['生鮭1切れ','はと麦大さじ2（前夜水に浸ける）','水400ml','塩少々','醤油小さじ1','生姜薄切り2枚'],
+        steps:['はと麦を水から30分茹でる','鮭を一口大に切り、鍋に水と生姜と一緒に入れる','沸騰したら弱火で10分（鮭に完全に火を通す）','はと麦を加え、塩・醤油で味を整える']
+      },
+    ],
+  },
+  damp: {
+    badge:'むくみケアタイプ', badgeColor:'#EEF3F9', badgeTextColor:'#3A5A8A',
+    name:'水分の巡りを整える時期',
+    catchphrase:'体の余分な水を流して、軽やかに',
+    desc:'むくみや体の重だるさは、体に水分が溜まっているサインです。水分の巡りを良くする食材を積極的に取り入れましょう。',
+    reason:'治療薬の副作用として、むくみが出ることがあります。中医学では「湿（しつ）」が溜まっている状態。はと麦・小豆などの利水食材が体を助けます。',
+    tips:['塩分を控えめにする（醤油・みそは少量ずつ）','温かい食事で体を温めながら水分を巡らせる','ゆっくりよく噛んで食べる'],
+    signs:['むくみ','体が重い','だるい','めまい','消化不良'],
+    foods:[
+      {emoji:'🌾', name:'はと麦', sub:'むくみ取り'},
+      {emoji:'🫘', name:'小豆', sub:'水を流す'},
+      {emoji:'🥬', name:'冬瓜', sub:'利水効果'},
+      {emoji:'🧅', name:'かぼちゃ', sub:'脾を補う'},
+      {emoji:'🫛', name:'そら豆', sub:'利尿効果'},
+    ],
+    recipes:[
+      {
+        title:'はと麦と小豆のお粥',
+        badge:'むくみ◎',badgeColor:'#EEF3F9',badgeText:'#3A5A8A',
+        effect:'余分な水分を排出し、むくみを和らげる',
+        ingredients:['お米1合','はと麦大さじ2','小豆大さじ1（缶詰でも可）','水600ml','塩少々'],
+        steps:['はと麦・小豆は前夜から水に浸けておく','全て鍋に入れ、弱火で30〜40分炊く（炊飯器でも可）','塩で軽く味を整える','缶詰小豆を使う場合は煮上がってから加える']
+      },
+      {
+        title:'鶏と冬瓜（かぼちゃ）のスープ',
+        badge:'利水◎',badgeColor:'#EEF3F9',badgeText:'#3A5A8A',
+        effect:'体の余分な水分を取り除きながら栄養補給',
+        ingredients:['鶏もも肉100g','冬瓜150g（またはかぼちゃ）','生姜薄切り2枚','水400ml','塩・醤油各少々'],
+        steps:['冬瓜は皮をむき一口大に切る','鍋に水・生姜・鶏肉を入れて火にかける','沸騰後弱火で10分','冬瓜を加えさらに10分、塩・醤油で味を整える']
+      },
+    ],
+  },
+  blood: {
+    badge:'血を補うタイプ', badgeColor:'#FBF0EF', badgeTextColor:'#9A4A44',
+    name:'血を補い、体に栄養を届ける時期',
+    catchphrase:'血を育てる食材で、内側から元気に',
+    desc:'顔色が悪い・めまい・疲れやすいのは「血虚（けつきょ）」のサインです。血を補う食材を積極的に取りましょう。',
+    reason:'治療中は骨髄での血液産生に影響が出ることがあります。中医学的に「血を補う」食材は、体の栄養を補充し内側から元気を育てます。',
+    tips:['黒い食材（黒ごま・黒豆・ひじき）を意識して取る','根菜類を温かい料理にして食べる','夜はしっかり休む（血は睡眠中に作られる）'],
+    signs:['顔色が青白い','めまい','目のかすみ','爪が白い','疲れやすい'],
+    foods:[
+      {emoji:'🌑', name:'黒ごま', sub:'血を補う'},
+      {emoji:'🫘', name:'黒豆', sub:'腎・血を補う'},
+      {emoji:'🥩', name:'牛肉', sub:'血を補う（加熱）'},
+      {emoji:'🥬', name:'ほうれん草', sub:'鉄分補給'},
+      {emoji:'🥕', name:'にんじん', sub:'血を育てる'},
+    ],
+    recipes:[
+      {
+        title:'黒ごま粥',
+        badge:'血補充◎',badgeColor:'#FBF0EF',badgeText:'#9A4A44',
+        effect:'血を補い、腎の働きを助ける',
+        ingredients:['お米1合','黒ごま大さじ2','水600ml','塩少々','はちみつ少々（お好みで）'],
+        steps:['お米と水を鍋に入れ、弱火で30分炊く','黒ごまを加えてさらに5分','塩で味を整え、お好みではちみつを加える']
+      },
+      {
+        title:'ほうれん草と豆腐の煮浸し',
+        badge:'鉄分◎',badgeColor:'#FBF0EF',badgeText:'#9A4A44',
+        effect:'鉄分とタンパク質を一緒に補給できる',
+        ingredients:['ほうれん草1束（よく洗う）','豆腐半丁','だし汁200ml','醤油大さじ1','みりん大さじ1'],
+        steps:['ほうれん草はよく洗い、3分茹でる','豆腐は一口大に切る','だし汁・醤油・みりんで煮汁を作り、豆腐を入れて煮る','ほうれん草を加え、さらに2分煮たら完成']
+      },
+    ],
+  },
+  heat: {
+    badge:'熱を冷ますタイプ', badgeColor:'#FBF0EF', badgeTextColor:'#C04040',
+    name:'体の熱を冷ますケアが大切な時期',
+    catchphrase:'体の余分な熱を取り除き、落ち着きを取り戻そう',
+    desc:'口の苦み・ほてり・熱っぽさは体に「熱」がこもっているサインです。涼性の食材で体を落ち着かせましょう。',
+    reason:'炎症や熱感は体が戦っているサイン。中医学では「清熱（せいねつ）」といい、体の余分な熱を取り除く食材が助けになります。',
+    tips:['冷たいものを急に大量に取るより、涼性の食材を調理して食べる','辛いもの・油っこいものは控える','水分はこまめに（冷たすぎないもの）'],
+    signs:['ほてり','口が苦い','のどが渇く','尿が濃い','イライラ'],
+    foods:[
+      {emoji:'🫘', name:'豆腐', sub:'体を冷ます'},
+      {emoji:'🥒', name:'きゅうり（加熱）', sub:'熱を取る'},
+      {emoji:'🍵', name:'緑豆', sub:'清熱効果'},
+      {emoji:'🧅', name:'冬瓜', sub:'利水・清熱'},
+      {emoji:'🥬', name:'白菜', sub:'体の熱を冷ます'},
+    ],
+    recipes:[
+      {
+        title:'豆腐と冬瓜のスープ',
+        badge:'清熱◎',badgeColor:'#FBF0EF',badgeText:'#C04040',
+        effect:'体の余分な熱を取り除き、水分補給もできる',
+        ingredients:['豆腐半丁','冬瓜150g（またはきゅうり加熱）','水400ml','だし汁小さじ2','塩少々','醤油少々'],
+        steps:['冬瓜は皮をむき一口大に切る','水とだし汁を鍋に入れ、冬瓜を入れて10分煮る','豆腐を加えてさらに3分','塩・醤油で味を整える']
+      },
+      {
+        title:'緑豆粥（りょくとうがゆ）',
+        badge:'清熱◎',badgeColor:'#FBF0EF',badgeText:'#C04040',
+        effect:'体を冷まし、むくみも取る万能粥',
+        ingredients:['お米1合','緑豆大さじ2（スーパーの豆コーナー）','水600ml','塩少々'],
+        steps:['緑豆を前夜から水に浸ける','お米・緑豆・水を鍋に入れ弱火で40分炊く','塩で味を整える','砂糖少々入れて甘いお粥にしても◎']
+      },
+    ],
+  },
+  balanced: {
+    badge:'比較的安定タイプ', badgeColor:'#EEF5F0', badgeTextColor:'#3A7A3A',
+    name:'今は比較的バランスが取れています',
+    catchphrase:'このまま続けよう。体を整える食事が効いています',
+    desc:'今の体の状態は比較的安定しています。このまま基本的な養生を続けながら、体をサポートしていきましょう。',
+    reason:'体のバランスが保たれています。治療中にこの状態を維持するために、引き続き食事・睡眠・体を温めることを大切にしましょう。',
+    tips:['毎日湯船に浸かり体を温める','はと麦ごはんを習慣にする','規則正しく食事をして胃腸を整える'],
+    signs:['比較的安定','食欲がある','体が動ける','気分も悪くない'],
+    foods:[
+      {emoji:'🌾', name:'はと麦', sub:'体を整える'},
+      {emoji:'🥣', name:'山芋', sub:'胃を守る'},
+      {emoji:'🍗', name:'鶏肉', sub:'気を補う'},
+      {emoji:'🌑', name:'黒ごま', sub:'血を補う'},
+      {emoji:'🫘', name:'黒豆', sub:'腎を補う'},
+    ],
+    recipes:[
+      {
+        title:'はと麦ごはん',
+        badge:'万能◎',badgeColor:'#EEF5F0',badgeText:'#3A7A3A',
+        effect:'炎症を抑え、むくみを取り、肌を整える',
+        ingredients:['お米2合','はと麦大さじ2'],
+        steps:['お米を洗い、はと麦を加える','水は通常より少し多め（大さじ1プラス）','普通に炊飯するだけ']
+      },
+      {
+        title:'鶏と根菜の煮物',
+        badge:'気力◎',badgeColor:'#EEF5F0',badgeText:'#3A7A3A',
+        effect:'気力・血を補い、体全体を整える',
+        ingredients:['鶏もも肉150g','にんじん1本','ごぼう半本','だし汁200ml','醤油大さじ2','みりん大さじ1','砂糖小さじ1'],
+        steps:['鶏肉・にんじん・ごぼうを一口大に切る','ごぼうは水にさらす','鍋に全て入れ、中火で沸騰させる','弱火にしてふたをし、20分煮る']
+      },
+    ],
+  },
+};
+
+// ===== STATE =====
+let answers = {tongue:null, q1:null, q2:null, q3:null, q4:null};
+
+// ===== INIT =====
+function init(){
+  // Tongue grid
+  const tg = document.getElementById('tongueGrid');
+  tongues.forEach(t => {
+    const d = document.createElement('div');
+    d.className='tongue-card';
+    d.innerHTML=`<div style="font-size:28px">${t.emoji}</div><p class="tongue-name">${t.name}</p><p class="tongue-desc">${t.desc}</p>`;
+    d.onclick=()=>{
+      document.querySelectorAll('.tongue-card').forEach(c=>c.classList.remove('selected'));
+      d.classList.add('selected');
+      answers.tongue=t;
+      document.getElementById('btnTongue').disabled=false;
+    };
+    tg.appendChild(d);
+  });
+
+  // Q1
+  buildOpts('q1opts', q1opts, 'q1', 'btnQ1');
+  // Q2
+  buildOpts('q2opts', q2opts, 'q2', 'btnQ2');
+  // Q3
+  buildOpts('q3opts', q3opts, 'q3', 'btnQ3');
+  // Q4
+  buildOpts('q4opts', q4opts, 'q4', 'btnQ4');
+}
+
+function buildOpts(gridId, opts, ansKey, btnId){
+  const g = document.getElementById(gridId);
+  opts.forEach(o => {
+    const d = document.createElement('div');
+    d.className='opt-card';
+    d.innerHTML=`<span class="opt-icon">${o.icon}</span><p class="opt-label">${o.label}</p><p class="opt-sub">${o.sub}</p>`;
+    d.onclick=()=>{
+      g.querySelectorAll('.opt-card').forEach(c=>c.classList.remove('selected'));
+      d.classList.add('selected');
+      answers[ansKey]=o;
+      document.getElementById(btnId).disabled=false;
+    };
+    g.appendChild(d);
+  });
+}
+
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function resetAll(){
+  answers={tongue:null,q1:null,q2:null,q3:null,q4:null};
+  document.querySelectorAll('.tongue-card,.opt-card').forEach(c=>c.classList.remove('selected'));
+  ['btnTongue','btnQ1','btnQ2','btnQ3','btnQ4'].forEach(id=>{
+    const b=document.getElementById(id);
+    if(b) b.disabled=true;
+  });
+}
+
+function calcType(){
+  const scores={spleen:0,qi:0,damp:0,blood:0,heat:0,balanced:0,cold:0,yin:0,stasis:0};
+  [answers.tongue?.scores, answers.q1?.scores, answers.q2?.scores, answers.q3?.scores, answers.q4?.scores].forEach(s=>{
+    if(!s) return;
+    Object.entries(s).forEach(([k,v])=>{ if(scores[k]!==undefined) scores[k]+=v; });
+  });
+  // Map to type keys
+  const typeScores = {
+    spleen: scores.spleen,
+    qi: scores.qi + scores.cold,
+    damp: scores.damp,
+    blood: scores.blood + scores.stasis,
+    heat: scores.heat,
+    balanced: scores.balanced,
+  };
+  return Object.entries(typeScores).sort((a,b)=>b[1]-a[1])[0][0];
+}
+
+function showResult(){
+  const typeKey = calcType();
+  const t = types[typeKey];
+
+  document.getElementById('rBadge').textContent=t.badge;
+  document.getElementById('rBadge').style.background=t.badgeColor;
+  document.getElementById('rBadge').style.color=t.badgeTextColor;
+  document.getElementById('rName').textContent=t.name;
+  document.getElementById('rCatchphrase').textContent=t.catchphrase;
+  document.getElementById('rDesc').textContent=t.desc;
+  document.getElementById('rReason').textContent=t.reason;
+
+  const tipsEl = document.getElementById('rTips');
+  tipsEl.innerHTML='';
+  t.tips.forEach(tip=>{
+    const d=document.createElement('div');
+    d.className='type-tips-item';
+    d.textContent=tip;
+    tipsEl.appendChild(d);
+  });
+
+  const signsEl = document.getElementById('rSigns');
+  signsEl.innerHTML='';
+  t.signs.forEach(s=>{
+    const sp=document.createElement('span');
+    sp.className='sign';
+    sp.textContent=s;
+    signsEl.appendChild(sp);
+  });
+
+  const foodsEl = document.getElementById('rFoods');
+  foodsEl.innerHTML='';
+  t.foods.forEach(f=>{
+    foodsEl.innerHTML+=`<div class="food-item"><span>${f.emoji}</span><p>${f.name}</p><small>${f.sub}</small></div>`;
+  });
+
+  const recipesEl = document.getElementById('rRecipes');
+  recipesEl.innerHTML='';
+  t.recipes.forEach(r=>{
+    let ings = r.ingredients.map(i=>`<span class="ing-tag">${i}</span>`).join('');
+    let steps = r.steps.map(s=>`<li>${s}</li>`).join('');
+    recipesEl.innerHTML+=`
+      <div class="recipe-card">
+        <div class="recipe-header">
+          <p class="recipe-title">${r.title}</p>
+          <span class="recipe-badge" style="background:${r.badgeColor};color:${r.badgeText}">${r.badge}</span>
+        </div>
+        <p class="recipe-effect">✨ ${r.effect}</p>
+        <p class="recipe-section">材料</p>
+        <div class="ingredients">${ings}</div>
+        <p class="recipe-section">作り方</p>
+        <ol class="steps-list">${steps}</ol>
+      </div>`;
+  });
+
+  goTo('s-result');
+}
+
+init();
+</script>
+</body>
+</html>
