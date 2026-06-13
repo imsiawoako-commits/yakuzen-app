@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>膵臓がん食事サポート 薬膳チェッカー</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Hiragino Kaku Gothic ProN', 'メイリオ', sans-serif;
+    background: linear-gradient(135deg, #fff8f0 0%, #ffecd2 100%);
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .header {
+    text-align: center;
+    padding: 30px 20px 20px;
+    background: linear-gradient(135deg, #e8740c, #f5a623);
+    border-radius: 20px;
+    color: white;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(232,116,12,0.3);
+  }
+  .header h1 {
+    font-size: 1.4em;
+    font-weight: bold;
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+  .header p {
+    font-size: 0.9em;
+    opacity: 0.95;
+    line-height: 1.6;
+  }
+  .hope-message {
+    background: white;
+    border-left: 5px solid #e8740c;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    line-height: 1.8;
+    font-size: 0.95em;
+    color: #444;
+  }
+  .hope-message .highlight {
+    color: #e8740c;
+    font-weight: bold;
+  }
+  .card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  .card h2 {
+    font-size: 1.1em;
+    color: #e8740c;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ffecd2;
+  }
+  .question-block {
+    margin-bottom: 20px;
+  }
+  .question-block p {
+    font-size: 0.95em;
+    color: #333;
+    margin-bottom: 10px;
+    font-weight: bold;
+    line-height: 1.5;
+  }
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .option-btn {
+    background: #fff8f0;
+    border: 2px solid #ffd4a3;
+    border-radius: 10px;
+    padding: 12px 16px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.9em;
+    color: #444;
+    transition: all 0.2s;
+    line-height: 1.4;
+  }
+  .option-btn:hover {
+    background: #ffecd2;
+    border-color: #e8740c;
+  }
+  .option-btn.selected {
+    background: #e8740c;
+    border-color: #e8740c;
+    color: white;
+    font-weight: bold;
+  }
+  .submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #e8740c, #f5a623);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 18px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: 0 4px 15px rgba(232,116,12,0.4);
+    transition: all 0.2s;
+  }
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(232,116,12,0.5);
+  }
+  .submit-btn:disabled {
+    background: #ccc;
+    box-shadow: none;
+    transform: none;
+    cursor: not-allowed;
+  }
+  .result-section {
+    display: none;
+  }
+  .result-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  .result-card h3 {
+    font-size: 1.05em;
+    color: #e8740c;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .avoid-box {
+    background: #fff3f3;
+    border: 2px solid #ffb3b3;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .avoid-box h4 {
+    color: #e05555;
+    font-size: 0.95em;
+    margin-bottom: 10px;
+  }
+  .avoid-box ul {
+    list-style: none;
+    padding: 0;
+  }
+  .avoid-box ul li {
+    padding: 4px 0;
+    font-size: 0.9em;
+    color: #555;
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .avoid-box ul li::before {
+    content: "⚠️";
+    position: absolute;
+    left: 0;
+    font-size: 0.8em;
+  }
+  .good-box {
+    background: #f0fff4;
+    border: 2px solid #a8e6c0;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .good-box h4 {
+    color: #2d8a4e;
+    font-size: 0.95em;
+    margin-bottom: 10px;
+  }
+  .good-box ul {
+    list-style: none;
+    padding: 0;
+  }
+  .good-box ul li {
+    padding: 4px 0;
+    font-size: 0.9em;
+    color: #444;
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .good-box ul li::before {
+    content: "✅";
+    position: absolute;
+    left: 0;
+    font-size: 0.8em;
+  }
+  .sugar-box {
+    background: #fffbf0;
+    border: 2px solid #ffd700;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .sugar-box h4 {
+    color: #b8860b;
+    font-size: 0.95em;
+    margin-bottom: 10px;
+  }
+  .sugar-box ul {
+    list-style: none;
+    padding: 0;
+  }
+  .sugar-box ul li {
+    padding: 4px 0;
+    font-size: 0.9em;
+    color: #555;
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .sugar-box ul li::before {
+    content: "🍯";
+    position: absolute;
+    left: 0;
+    font-size: 0.8em;
+  }
+  .medicine-box {
+    background: #f0f4ff;
+    border: 2px solid #b3c6ff;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .medicine-box h4 {
+    color: #3355cc;
+    font-size: 0.95em;
+    margin-bottom: 10px;
+  }
+  .medicine-box p {
+    font-size: 0.9em;
+    color: #444;
+    line-height: 1.7;
+  }
+  .recipe-item {
+    background: #fff8f0;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .recipe-item h4 {
+    color: #e8740c;
+    font-size: 0.95em;
+    margin-bottom: 6px;
+  }
+  .recipe-item p {
+    font-size: 0.85em;
+    color: #555;
+    line-height: 1.6;
+  }
+  .conveni-box {
+    background: #f8f8f8;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .conveni-box h4 {
+    color: #555;
+    font-size: 0.95em;
+    margin-bottom: 10px;
+  }
+  .conveni-ok { color: #2d8a4e; font-weight: bold; }
+  .conveni-ng { color: #e05555; font-weight: bold; }
+  .conveni-box ul {
+    list-style: none;
+    padding: 0;
+  }
+  .conveni-box ul li {
+    padding: 4px 0;
+    font-size: 0.88em;
+    color: #444;
+    line-height: 1.5;
+  }
+  .sensei-box {
+    background: linear-gradient(135deg, #fff8f0, #ffecd2);
+    border: 2px solid #e8740c;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .sensei-box h4 {
+    color: #e8740c;
+    font-size: 0.95em;
+    margin-bottom: 10px;
+  }
+  .sensei-box p {
+    font-size: 0.88em;
+    color: #555;
+    line-height: 1.7;
+  }
+  .sensei-box a {
+    color: #e8740c;
+    font-weight: bold;
+  }
+  .disclaimer {
+    background: #f8f8f8;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 0.8em;
+    color: #888;
+    line-height: 1.7;
+    margin-top: 10px;
+    text-align: center;
+  }
+  .footer-note {
+    text-align: center;
+    font-size: 0.85em;
+    color: #aaa;
+    padding: 20px 0;
+  }
+  .progress-bar {
+    background: #ffecd2;
+    border-radius: 10px;
+    height: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    background: linear-gradient(90deg, #e8740c, #f5a623);
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>🍊 膵臓がん食事サポート<br>薬膳チェッカー</h1>
+    <p>今日から始められる食事のヒントを<br>一緒に考えましょう</p>
+  </div>
+
+  <div class="hope-message">
+    <p>膵臓がんと言われて、絶望していませんか。</p>
+    <br>
+    <p>このアプリを作った私の父は、<span class="highlight">6年前の正月が最後かもしれない</span>と言われました。膵臓がんステージ4でした。</p>
+    <br>
+    <p><span class="highlight">今も元気に生きています。</span></p>
+    <br>
+    <p>食事にできることがあります。難しくなくていい。高価な漢方薬が手に届かなくても、毎日の食事は続きます。今日から始められることを、一緒に考えましょう。</p>
+  </div>
+
+  <!-- チェックフォーム -->
+  <div id="form-section">
+    <div class="card">
+      <h2>📋 今の状態を教えてください</h2>
+
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress" style="width:0%"></div>
+      </div>
+
+      <!-- Q1 -->
+      <div class="question-block">
+        <p>Q1. 現在の状況を教えてください</p>
+        <div class="options" data-q="q1">
+          <button class="option-btn" data-val="pre">手術前・治療方針を検討中</button>
+          <button class="option-btn" data-val="post">手術後の回復中</button>
+          <button class="option-btn" data-val="chemo">抗がん剤・放射線治療中</button>
+          <button class="option-btn" data-val="family">家族・サポーターとして使っている</button>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="question-block">
+        <p>Q2. 舌の色はどちらに近いですか？<br><span style="font-size:0.85em;color:#888">（鏡で確認してみてください）</span></p>
+        <div class="options" data-q="q2">
+          <button class="option-btn" data-val="pale">白っぽい・薄い色</button>
+          <button class="option-btn" data-val="red">赤い・乾いている感じ</button>
+          <button class="option-btn" data-val="purple">紫がかっている・暗い色</button>
+          <button class="option-btn" data-val="normal">ふつうのピンク色</button>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="question-block">
+        <p>Q3. 体重の変化はありますか？</p>
+        <div class="options" data-q="q3">
+          <button class="option-btn" data-val="losing">かなり減っている・食欲がない</button>
+          <button class="option-btn" data-val="stable">あまり変わらない</button>
+          <button class="option-btn" data-val="sweet">甘いものが止まらない</button>
+          <button class="option-btn" data-val="ok">食欲は問題ない</button>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="question-block">
+        <p>Q4. 手足の温度はどうですか？</p>
+        <div class="options" data-q="q4">
+          <button class="option-btn" data-val="cold">冷えやすい・温まりにくい</button>
+          <button class="option-btn" data-val="hot">ほてり・熱感がある</button>
+          <button class="option-btn" data-val="normal">特に気にならない</button>
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="question-block">
+        <p>Q5. 消化・お腹の調子はどうですか？</p>
+        <div class="options" data-q="q5">
+          <button class="option-btn" data-val="weak">胃腸が弱い・消化が悪い感じ</button>
+          <button class="option-btn" data-val="loose">下痢・軟便が続いている</button>
+          <button class="option-btn" data-val="nausea">吐き気・むかつきがある</button>
+          <button class="option-btn" data-val="ok">特に問題ない</button>
+        </div>
+      </div>
+
+      <button class="submit-btn" id="submit-btn" disabled onclick="showResult()">
+        今日の食事ヒントを見る 🍊
+      </button>
+    </div>
+  </div>
+
+  <!-- 結果 -->
+  <div class="result-section" id="result-section">
+
+    <div class="result-card">
+      <h3>⚠️ 膵臓がんの方が避けたい食べ物</h3>
+      <div class="avoid-box">
+        <h4>できるだけ避けましょう</h4>
+        <ul>
+          <li>砂糖・甘い加工食品・清涼飲料水（血糖値を急上昇させる）</li>
+          <li>牛肉・豚肉など脂の多い肉（消化に負担がかかる）</li>
+          <li>揚げ物・脂っこい料理（膵臓に負担）</li>
+          <li>アルコール（膵臓への直接ダメージ）</li>
+          <li>辛い刺激物・香辛料の強いもの</li>
+          <li>白米・白パンなど精製された炭水化物（血糖値スパイクの原因）</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="result-card" id="result-main">
+      <!-- 体質別結果がここに入る -->
+    </div>
+
+    <div class="result-card">
+      <h3>🍯 甘いもの・脂っこいものが欲しくなるのはなぜ？</h3>
+      <div class="medicine-box">
+        <h4>💡 意志が弱いのではなく、体のサインです</h4>
+        <p>
+          甘いものや脂っこいものが無性に食べたくなるのは、<strong>ミネラルやたんぱく質が不足しているサイン</strong>と言われています。<br><br>
+          体が必要な栄養を求めて、手っ取り早くエネルギーになる甘いものや脂を欲しがってしまうんです。<br><br>
+          このアプリを作った私自身も、ミネラルの多い塩とたんぱく質を意識して取るようにしたら、甘いものへの欲求がずいぶん落ち着きました😊
+        </p>
+      </div>
+      <div class="good-box" style="margin-top:12px;">
+        <h4>甘いもの欲を落ち着かせる食べ方</h4>
+        <ul>
+          <li>ミネラルの豊富な天然塩を料理に使う（精製塩より天然塩を）</li>
+          <li>たんぱく質を毎食意識して取る（鶏肉・卵・豆腐・魚）</li>
+          <li>甘いものが欲しくなったら、まず温かいお茶やスープを飲んでみる</li>
+          <li>ナッツ類（素焼き）を少量つまむとミネラル補給になる</li>
+        </ul>
+      </div>
+      <div class="sugar-box" style="margin-top:12px;">
+        <h4>どうしても甘いものが食べたいときは</h4>
+        <ul>
+          <li>希少糖（ラカントSなど）——血糖値に影響しにくい</li>
+          <li>みりん——少量で自然な甘み</li>
+          <li>はちみつ——少量ならGI値が低め</li>
+          <li>甘酒（米麹）——腸内環境も整える</li>
+        </ul>
+      </div>
+      <p style="font-size:0.85em;color:#888;line-height:1.7;margin-top:10px;">
+        ※ 膵臓を摘出した後は血糖値の調節が変わり、甘いものを特に欲しやすくなります。砂糖を一気にやめなくても、少しずつ置き換えていきましょう。
+      </p>
+    </div>
+
+    <div class="result-card">
+      <h3>🍱 コンビニ・惣菜 選び方のヒント</h3>
+      <div class="conveni-box">
+        <h4><span class="conveni-ok">✅ OK</span> 選びやすいもの</h4>
+        <ul>
+          <li>✅ 鶏のささみ・蒸し鶏（消化が良く良質なたんぱく質）</li>
+          <li>✅ 豆腐・湯豆腐・冷ややっこ</li>
+          <li>✅ 温泉卵・ゆで卵</li>
+          <li>✅ 鮭・サバの塩焼き（缶詰も可）</li>
+          <li>✅ お粥・雑炊（消化に良い）</li>
+          <li>✅ 野菜の煮物（かぼちゃ・にんじん・大根）</li>
+          <li>✅ 味噌汁（豆腐・わかめ）</li>
+        </ul>
+        <br>
+        <h4><span class="conveni-ng">⚠️ NG</span> できれば避けたいもの</h4>
+        <ul>
+          <li>⚠️ 揚げ物全般（唐揚げ・コロッケ・天ぷら）</li>
+          <li>⚠️ 甘いパン・菓子パン・スイーツ類</li>
+          <li>⚠️ 脂の多い肉（カルビ・豚バラ・ベーコン）</li>
+          <li>⚠️ インスタント食品・カップ麺（添加物・塩分過多）</li>
+          <li>⚠️ 清涼飲料水・甘いドリンク</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="result-card" id="moxibustion-card">
+      <h3>🔥 セルフお灸——体を温めて整えましょう</h3>
+      <div class="medicine-box">
+        <h4>💊 セルフお灸について</h4>
+        <p>
+          鍼灸院に通えない方、漢方薬が高くて手が届かない方でも、<strong>市販のせんねん灸</strong>なら自宅で手軽に始められます。<br><br>
+          体を温め、血の巡りを整え、免疫力を高める効果が期待できます。毎日続けることで、体は少しずつ変わっていきます。
+        </p>
+      </div>
+      <div id="moxibustion-points">
+        <!-- 体質別ツボがJSで入る -->
+      </div>
+      <div class="good-box" style="margin-top:12px;">
+        <h4>セルフお灸の基本的な使い方</h4>
+        <ul>
+          <li>せんねん灸（市販品）をドラッグストアで購入できます</li>
+          <li>1日1〜2回、各ツボに1〜2壮（個）が目安</li>
+          <li>熱すぎると感じたらすぐに外す</li>
+          <li>食後すぐ・入浴直後・飲酒後は避ける</li>
+          <li>続けることが大切。毎日少しずつが理想</li>
+        </ul>
+      </div>
+      <p style="font-size:0.82em;color:#888;line-height:1.7;margin-top:10px;">
+        ※ 治療中の方は主治医にご相談の上でお使いください。抗がん剤治療中は皮膚が敏感になっている場合があります。
+      </p>
+    </div>
+
+    <div class="result-card">
+      <h3>🥢 今日から作れる簡単レシピ</h3>
+
+      <div class="recipe-item">
+        <h4>鶏のやわらか煮</h4>
+        <p>鶏むね肉またはささみを、だし・薄口しょうゆ・みりんで弱火でゆっくり煮るだけ。消化が良く、体力をつけたいときに。</p>
+      </div>
+
+      <div class="recipe-item">
+        <h4>かぼちゃのやさしい煮物</h4>
+        <p>かぼちゃをだしと少量のみりん・しょうゆで煮る。自然な甘みで血糖値を急上昇させず、胃腸にもやさしい一品。</p>
+      </div>
+
+      <div class="recipe-item">
+        <h4>たまご雑炊</h4>
+        <p>白米をだしでやわらかく炊き、溶き卵を回し入れる。食欲がないときでも食べやすい。三つ葉や海苔を添えると香りが出る。</p>
+      </div>
+
+      <div class="recipe-item">
+        <h4>山芋のとろろ汁</h4>
+        <p>山芋をすりおろして、だし・少量のしょうゆで伸ばすだけ。胃腸を整え、消化を助ける薬膳食材の代表。</p>
+      </div>
+
+      <div class="recipe-item">
+        <h4>りんごのコンポート</h4>
+        <p>りんごを皮ごと薄切りにして、少量の水とはちみつで軽く煮る。砂糖なしで甘みが出る。体を冷やしすぎず、消化にも良い。</p>
+      </div>
+    </div>
+
+    <div class="result-card">
+      <h3>🌿 帯津良一先生・天仙液について</h3>
+      <div class="sensei-box">
+        <h4>ホリスティック医学の第一人者</h4>
+        <p>
+          帯津良一先生は、西洋医学と東洋医学・気功などを組み合わせた「ホリスティック医学」を日本に広めた先生です。がん治療においても、患者さんの「生きる力」全体を高めることを大切にされています。<br><br>
+          <strong>天仙液</strong>は中国の漢方薬で、帯津先生が「良いものだけど、高い」とおっしゃっていた製品です。このアプリを作った私の父も、膵臓がんの治療と並行して天仙液を使っていました。<br><br>
+          高価なため誰でも使えるものではありませんが、選択肢の一つとして知っておくことに意味があると思います。興味がある方は、主治医や漢方専門家にご相談ください。
+        </p>
+      </div>
+      <div class="sensei-box" style="margin-top:12px;">
+        <h4>🌿 さおり薬膳</h4>
+        <p>
+          薬膳の考え方を日常生活に取り入れるアドバイスをされています。「がんの人は砂糖を抜いた方が良い」という考え方も、さおり薬膳さんのアドバイスをもとにしています。
+        </p>
+      </div>
+      <div class="sensei-box" style="margin-top:12px;">
+        <h4>🧴 ホッティ薬店</h4>
+        <p>
+          漢方・自然療法の観点から、体に優しいセルフケアを発信されています。がんと向き合う方への食事・生活習慣のヒントも参考になります。
+        </p>
+      </div>
+    </div>
+
+    <div class="result-card">
+      <h3>🧂 塩の選び方——精製塩より天然塩を</h3>
+      <div class="good-box">
+        <h4>なぜ塩にこだわるのか</h4>
+        <ul>
+          <li>精製塩は塩化ナトリウムだけ。ミネラルがほぼ取り除かれている</li>
+          <li>非加熱の天然塩はマグネシウム・カリウム・カルシウムなどミネラルが豊富</li>
+          <li>術後で栄養吸収が落ちているときこそ、ミネラルの補給が大切</li>
+          <li>腸内環境を整えるミネラルは、薬の吸収にも影響する</li>
+        </ul>
+      </div>
+      <div class="avoid-box" style="margin-top:12px;">
+        <h4>避けたい塩</h4>
+        <ul>
+          <li>精製塩・食塩（スーパーの安い塩の多くはこれ）</li>
+          <li>加工食品・インスタント食品に含まれる塩分（精製塩が使われていることが多い）</li>
+        </ul>
+      </div>
+      <div class="sugar-box" style="margin-top:12px;">
+        <h4>選びたい塩</h4>
+        <ul>
+          <li>非加熱の天然塩・海塩（ラベルに「平釜」「天日干し」などと書かれているもの）</li>
+          <li>「にがり」が含まれているもの（マグネシウム源）</li>
+          <li>ミネラルウォーターと組み合わせると吸収が良い</li>
+        </ul>
+      </div>
+      <p style="font-size:0.85em;color:#888;line-height:1.7;margin-top:10px;">
+        ※ 塩分の過剰摂取は体に負担をかけます。量は控えめに、質にこだわるのがポイントです。
+      </p>
+    </div>
+
+    <div class="disclaimer">
+      ⚠️ このアプリは医療行為ではありません。治療中の方は必ず主治医・薬剤師にご相談ください。食事は治療を補うものであり、治療の代わりにはなりません。<br><br>
+      <em>ドラッグストア歴19年 のんちゃん</em>
+    </div>
+
+    <div class="footer-note">
+      食事は、希望に変わる。<br>
+      今日も一歩、一緒に。🍊
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const answers = {};
+
+  document.querySelectorAll('.options').forEach(group => {
+    group.querySelectorAll('.option-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        group.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        answers[group.dataset.q] = btn.dataset.val;
+        updateProgress();
+      });
+    });
+  });
+
+  function updateProgress() {
+    const total = 5;
+    const filled = Object.keys(answers).length;
+    document.getElementById('progress').style.width = (filled / total * 100) + '%';
+    document.getElementById('submit-btn').disabled = filled < total;
+  }
+
+  function showResult() {
+    document.getElementById('form-section').style.display = 'none';
+    document.getElementById('result-section').style.display = 'block';
+    buildMainResult();
+    window.scrollTo(0, 0);
+  }
+
+  function buildMainResult() {
+    const q1 = answers.q1;
+    const q2 = answers.q2;
+    const q3 = answers.q3;
+    const q4 = answers.q4;
+    const q5 = answers.q5;
+
+    let constitutionTitle = '';
+    let constitutionDesc = '';
+    let foods = [];
+    let tips = [];
+
+    // 体質判定
+    if (q2 === 'pale' || q4 === 'cold') {
+      constitutionTitle = '🌡️ 気血不足タイプ——体を温めて、エネルギーを補いましょう';
+      constitutionDesc = '舌の色が薄く手足が冷えている状態は、気と血が不足しているサインです。消化に負担をかけず、温かいものでエネルギーを補いましょう。';
+      foods = ['鶏肉（むね・ささみ）', 'かぼちゃ・にんじん', '山芋・長芋', '黒豆・小豆', 'しょうが（少量）', 'なつめ（棗）'];
+      tips = ['できるだけ温かい状態で食べる', '冷たい飲み物・冷たい食べ物は控える', '一度にたくさん食べず、少量を数回に分けて'];
+    } else if (q2 === 'red' || q4 === 'hot') {
+      constitutionTitle = '🌊 陰虚・熱タイプ——体の熱を冷まし、潤いを補いましょう';
+      constitutionDesc = '舌が赤く乾いている、ほてりがある状態は、体に熱がこもりやすいサインです。体を潤わせ、熱を鎮める食材を取り入れましょう。';
+      foods = ['豆腐・豆乳', '白きくらげ', 'れんこん・百合根', '梨・りんご（加熱）', '鮭・白身魚', 'ほうれん草・小松菜'];
+      tips = ['刺激物・辛いもの・揚げ物は特に避ける', '水分はこまめに、温かいものを', '抗がん剤治療中の口内炎には梨や豆腐が◎'];
+    } else if (q2 === 'purple') {
+      constitutionTitle = '💜 瘀血タイプ——血の巡りを整えましょう';
+      constitutionDesc = '舌が紫がかっている状態は、血の流れが滞っているサインです。血行を改善し、老廃物を排出しやすい食材を取り入れましょう。';
+      foods = ['黒豆・黒ごま', 'たまねぎ・長ねぎ', 'にら（少量）', 'さんま・青魚', 'ターメリック（少量）', 'なす（加熱）'];
+      tips = ['体を冷やさないよう温かい食事を心がける', '湯船にゆっくり浸かるのも血行改善に有効', '食事は腹8分目で消化器に負担をかけない'];
+    } else {
+      constitutionTitle = '🌱 バランスタイプ——現状維持と腸内環境を整えましょう';
+      constitutionDesc = '比較的バランスが取れている状態です。膵臓がんの治療中は腸内環境が乱れやすいため、消化を助け腸を整える食材を意識しましょう。';
+      foods = ['納豆・味噌（発酵食品）', '山芋・オクラ', 'はと麦', '鮭・白身魚', 'ブロッコリー・キャベツ', '玄米・雑穀（消化できる範囲で）'];
+      tips = ['消化酵素が減っているため、よく噛んでゆっくり食べる', '発酵食品を毎日少量取り入れる', '食後30分は横にならず、消化を助ける'];
+    }
+
+    // 体重減少の追加アドバイス
+    let weightNote = '';
+    if (q3 === 'losing') {
+      weightNote = `
+        <div class="good-box" style="margin-top:14px;">
+          <h4>⚡ 体重が落ちているときの食事ポイント</h4>
+          <ul>
+            <li>無理に一度にたくさん食べようとしない</li>
+            <li>少量を1日5〜6回に分けて食べる</li>
+            <li>卵・豆腐・鶏肉など消化しやすいたんぱく質を優先</li>
+            <li>MCTオイル（中鎖脂肪酸）を少量加えるとカロリー補給に</li>
+            <li>食べられそうなときに、食べられるものを食べる</li>
+          </ul>
+        </div>`;
+    } else if (q3 === 'sweet') {
+      weightNote = `
+        <div class="sugar-box" style="margin-top:14px;">
+          <h4>🍯 甘いものが止まらないときは</h4>
+          <ul>
+            <li>膵臓の摘出後は血糖調節が変わり、甘いものを欲しやすくなります</li>
+            <li>砂糖をいきなりゼロにしなくてもOK。少しずつ置き換えを</li>
+            <li>希少糖（ラカントS）・みりん・はちみつに切り替えていきましょう</li>
+            <li>甘みが欲しいときはりんごのコンポートや甘酒（少量）も◎</li>
+          </ul>
+        </div>`;
+    }
+
+    // 消化器の追加アドバイス
+    let digestNote = '';
+    if (q5 === 'weak' || q5 === 'loose') {
+      digestNote = `
+        <div class="good-box" style="margin-top:14px;">
+          <h4>🌿 消化器を整える食材</h4>
+          <ul>
+            <li>山芋・長芋（消化を助ける酵素が豊富）</li>
+            <li>梅干し（少量、胃腸を整える）</li>
+            <li>生姜（少量、温めて消化促進）</li>
+            <li>お粥・雑炊（胃腸への負担が最小）</li>
+            <li>はと麦（むくみと炎症を抑える）</li>
+          </ul>
+        </div>`;
+    } else if (q5 === 'nausea') {
+      digestNote = `
+        <div class="good-box" style="margin-top:14px;">
+          <h4>🌿 吐き気があるときの食事</h4>
+          <ul>
+            <li>生姜湯（少量のすりおろし生姜＋お湯）——吐き気を和らげる</li>
+            <li>梅干しをなめる——胃を落ち着かせる</li>
+            <li>冷たいものより、常温〜温かいものを</li>
+            <li>香りの強いものは避ける</li>
+            <li>食べられないときは水分だけでもOK</li>
+          </ul>
+        </div>`;
+    }
+
+    // 家族向けメッセージ
+    let familyNote = '';
+    if (q1 === 'family') {
+      familyNote = `
+        <div class="medicine-box" style="margin-top:14px;">
+          <h4>👨‍👩‍👧 サポートされている方へ</h4>
+          <p>
+            「何をしてあげれば良いかわからない」という気持ち、よくわかります。<br><br>
+            食事を作ることは、直接体を支えることです。難しく考えなくてOK。<br>
+            今日の一品が、本人にとっての希望になることがあります。<br><br>
+            焦らず、一緒に、できることから始めましょう。
+          </p>
+        </div>`;
+    }
+
+    const html = `
+      <h3>🌿 あなたの体質タイプ</h3>
+      <p style="font-size:1.05em;font-weight:bold;color:#e8740c;margin-bottom:10px;">${constitutionTitle}</p>
+      <p style="font-size:0.9em;color:#555;line-height:1.7;margin-bottom:16px;">${constitutionDesc}</p>
+      <div class="good-box">
+        <h4>今日から食べると良い食材</h4>
+        <ul>
+          ${foods.map(f => `<li>${f}</li>`).join('')}
+        </ul>
+      </div>
+      <div class="good-box" style="margin-top:12px;">
+        <h4>食べ方のポイント</h4>
+        <ul>
+          ${tips.map(t => `<li>${t}</li>`).join('')}
+        </ul>
+      </div>
+      ${weightNote}
+      ${digestNote}
+      ${familyNote}
+    `;
+
+    document.getElementById('result-main').innerHTML = html;
+
+    // ツボを体質別にセット
+    buildMoxibustion(q2, q4, q5);
+  }
+
+  function buildMoxibustion(q2, q4, q5) {
+    let points = [];
+
+    // 共通ツボ（全員）
+    points.push({
+      name: '足三里（あしさんり）',
+      location: 'ひざのお皿の外側の下、指4本分下がったところ',
+      effect: '胃腸を整える・免疫力を高める・体力をつける。鍼灸の定番中の定番ツボ。術後の回復にも◎'
+    });
+
+    if (q2 === 'pale' || q4 === 'cold') {
+      points.push({
+        name: '三陰交（さんいんこう）',
+        location: '内くるぶしの上、指4本分上がったところ',
+        effect: '血の巡りを整える・冷えを改善・消化器を温める。気血不足タイプに特におすすめ'
+      });
+      points.push({
+        name: '関元（かんげん）',
+        location: 'へその下、指4本分下がったところ',
+        effect: '体を温める・エネルギーを補う。体力が落ちているとき・冷えが強いときに'
+      });
+    } else if (q2 === 'red' || q4 === 'hot') {
+      points.push({
+        name: '太渓（たいけい）',
+        location: '内くるぶしとアキレス腱の間のくぼみ',
+        effect: '体の潤いを補う・熱をしずめる。ほてり・口の乾きがあるときに'
+      });
+      points.push({
+        name: '三陰交（さんいんこう）',
+        location: '内くるぶしの上、指4本分上がったところ',
+        effect: '潤いを補い血の巡りを整える。陰虚タイプの基本ツボ'
+      });
+    } else if (q2 === 'purple') {
+      points.push({
+        name: '血海（けっかい）',
+        location: 'ひざのお皿の内側の上、指3本分上がったところ',
+        effect: '血の巡りを良くする・老廃物を流す。瘀血タイプに最適'
+      });
+      points.push({
+        name: '三陰交（さんいんこう）',
+        location: '内くるぶしの上、指4本分上がったところ',
+        effect: '血行改善・むくみを取る・冷えにも対応'
+      });
+    } else {
+      points.push({
+        name: '中脘（ちゅうかん）',
+        location: 'みぞおちとへそのちょうど中間',
+        effect: '消化器を整える・食欲を助ける・胃腸の働きを活発にする'
+      });
+      points.push({
+        name: '三陰交（さんいんこう）',
+        location: '内くるぶしの上、指4本分上がったところ',
+        effect: '全身のバランスを整える・血の巡りを助ける'
+      });
+    }
+
+    // 消化が悪いとき追加
+    if (q5 === 'weak' || q5 === 'loose' || q5 === 'nausea') {
+      points.push({
+        name: '内関（ないかん）',
+        location: '手首の内側の中央、指3本分ひじ側に上がったところ',
+        effect: '吐き気・むかつきを和らげる・胃腸を落ち着かせる。抗がん剤の副作用にも'
+      });
+    }
+
+    const html = points.map(p => `
+      <div class="recipe-item" style="margin-bottom:12px;">
+        <h4>📍 ${p.name}</h4>
+        <p><strong>場所：</strong>${p.location}</p>
+        <p style="margin-top:4px;"><strong>効果：</strong>${p.effect}</p>
+      </div>
+    `).join('');
+
+    document.getElementById('moxibustion-points').innerHTML = html;
+  }
+</script>
+</body>
+</html>
