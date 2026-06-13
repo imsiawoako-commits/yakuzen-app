@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>子宮の病気 食事サポート 薬膳チェッカー</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Hiragino Kaku Gothic ProN', 'メイリオ', sans-serif;
+    background: linear-gradient(135deg, #fff0f5 0%, #ffd6e7 100%);
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .header {
+    text-align: center;
+    padding: 30px 20px 20px;
+    background: linear-gradient(135deg, #d4457a, #e87aab);
+    border-radius: 20px;
+    color: white;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(212,69,122,0.3);
+  }
+  .header h1 {
+    font-size: 1.4em;
+    font-weight: bold;
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+  .header p {
+    font-size: 0.9em;
+    opacity: 0.95;
+    line-height: 1.6;
+  }
+  .hope-message {
+    background: white;
+    border-left: 5px solid #d4457a;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    line-height: 1.8;
+    font-size: 0.95em;
+    color: #444;
+  }
+  .hope-message .highlight {
+    color: #d4457a;
+    font-weight: bold;
+  }
+  .card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  .card h2 {
+    font-size: 1.1em;
+    color: #d4457a;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ffd6e7;
+  }
+  .question-block {
+    margin-bottom: 20px;
+  }
+  .question-block p {
+    font-size: 0.95em;
+    color: #333;
+    margin-bottom: 10px;
+    font-weight: bold;
+    line-height: 1.5;
+  }
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .option-btn {
+    background: #fff0f5;
+    border: 2px solid #ffb3d1;
+    border-radius: 10px;
+    padding: 12px 16px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.9em;
+    color: #444;
+    transition: all 0.2s;
+    line-height: 1.4;
+  }
+  .option-btn:hover {
+    background: #ffd6e7;
+    border-color: #d4457a;
+  }
+  .option-btn.selected {
+    background: #d4457a;
+    border-color: #d4457a;
+    color: white;
+    font-weight: bold;
+  }
+  .submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #d4457a, #e87aab);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 18px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: 0 4px 15px rgba(212,69,122,0.4);
+    transition: all 0.2s;
+  }
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(212,69,122,0.5);
+  }
+  .submit-btn:disabled {
+    background: #ccc;
+    box-shadow: none;
+    transform: none;
+    cursor: not-allowed;
+  }
+  .result-section { display: none; }
+  .result-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  .result-card h3 {
+    font-size: 1.05em;
+    color: #d4457a;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .avoid-box {
+    background: #fff3f3;
+    border: 2px solid #ffb3b3;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .avoid-box h4 { color: #e05555; font-size: 0.95em; margin-bottom: 10px; }
+  .avoid-box ul { list-style: none; padding: 0; }
+  .avoid-box ul li {
+    padding: 4px 0;
+    font-size: 0.9em;
+    color: #555;
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .avoid-box ul li::before { content: "⚠️"; position: absolute; left: 0; font-size: 0.8em; }
+  .good-box {
+    background: #fff0f5;
+    border: 2px solid #ffb3d1;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .good-box h4 { color: #d4457a; font-size: 0.95em; margin-bottom: 10px; }
+  .good-box ul { list-style: none; padding: 0; }
+  .good-box ul li {
+    padding: 4px 0;
+    font-size: 0.9em;
+    color: #444;
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .good-box ul li::before { content: "✅"; position: absolute; left: 0; font-size: 0.8em; }
+  .info-box {
+    background: #f8f0ff;
+    border: 2px solid #d4b3ff;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .info-box h4 { color: #7b4fa6; font-size: 0.95em; margin-bottom: 10px; }
+  .info-box p { font-size: 0.9em; color: #555; line-height: 1.7; }
+  .bath-box {
+    background: #f0f8ff;
+    border: 2px solid #b3d4ff;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .bath-box h4 { color: #3366cc; font-size: 0.95em; margin-bottom: 10px; }
+  .bath-box ul { list-style: none; padding: 0; }
+  .bath-box ul li {
+    padding: 4px 0;
+    font-size: 0.9em;
+    color: #444;
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .bath-box ul li::before { content: "🛁"; position: absolute; left: 0; font-size: 0.8em; }
+  .sensei-box {
+    background: linear-gradient(135deg, #fff0f5, #ffd6e7);
+    border: 2px solid #d4457a;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .sensei-box h4 { color: #d4457a; font-size: 0.95em; margin-bottom: 10px; }
+  .sensei-box p { font-size: 0.88em; color: #555; line-height: 1.7; }
+  .recipe-item {
+    background: #fff0f5;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .recipe-item h4 { color: #d4457a; font-size: 0.95em; margin-bottom: 6px; }
+  .recipe-item p { font-size: 0.85em; color: #555; line-height: 1.6; }
+  .progress-bar {
+    background: #ffd6e7;
+    border-radius: 10px;
+    height: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    background: linear-gradient(90deg, #d4457a, #e87aab);
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+  }
+  .disclaimer {
+    background: #f8f8f8;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 0.8em;
+    color: #888;
+    line-height: 1.7;
+    margin-top: 10px;
+    text-align: center;
+  }
+  .footer-note {
+    text-align: center;
+    font-size: 0.85em;
+    color: #aaa;
+    padding: 20px 0;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>🌸 子宮の病気 食事サポート<br>薬膳チェッカー</h1>
+    <p>今日から始められることを<br>一緒に考えましょう</p>
+  </div>
+
+  <div class="hope-message">
+    <p>このアプリを作った私自身も、<span class="highlight">子宮肉腫かもしれない</span>と言われたことがあります。</p>
+    <br>
+    <p>調べても調べても怖い情報ばかり。医者には「とって調べるしかない」と言われるだけ。</p>
+    <br>
+    <p>そのとき、自分で調べて出会ったのが中医学の考え方でした。</p>
+    <br>
+    <p><span class="highlight">食事にできることがあります。</span>治療の代わりにはならないけれど、体を整えることは必ずできる。今日から始められることを、一緒に考えましょう。</p>
+  </div>
+
+  <div id="form-section">
+    <div class="card">
+      <h2>🌸 今の状態を教えてください</h2>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress" style="width:0%"></div>
+      </div>
+
+      <div class="question-block">
+        <p>Q1. 現在の状況を教えてください</p>
+        <div class="options" data-q="q1">
+          <button class="option-btn" data-val="pre">手術前・治療方針を検討中</button>
+          <button class="option-btn" data-val="post">手術後の回復中</button>
+          <button class="option-btn" data-val="chemo">抗がん剤・放射線治療中</button>
+          <button class="option-btn" data-val="watch">経過観察中（子宮筋腫など）</button>
+          <button class="option-btn" data-val="family">家族・サポーターとして使っている</button>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <p>Q2. 舌の色はどちらに近いですか？<br><span style="font-size:0.85em;color:#888">（鏡で確認してみてください）</span></p>
+        <div class="options" data-q="q2">
+          <button class="option-btn" data-val="pale">白っぽい・薄い色</button>
+          <button class="option-btn" data-val="red">赤い・乾いている感じ</button>
+          <button class="option-btn" data-val="purple">紫がかっている・暗い色</button>
+          <button class="option-btn" data-val="normal">ふつうのピンク色</button>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <p>Q3. 体の冷えはありますか？</p>
+        <div class="options" data-q="q3">
+          <button class="option-btn" data-val="verycold">とても冷えやすい・特に下半身が冷たい</button>
+          <button class="option-btn" data-val="cold">少し冷えを感じる</button>
+          <button class="option-btn" data-val="hot">ほてり・のぼせがある</button>
+          <button class="option-btn" data-val="normal">特に気にならない</button>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <p>Q4. むくみはありますか？</p>
+        <div class="options" data-q="q4">
+          <button class="option-btn" data-val="strong">足・顔がよくむくむ</button>
+          <button class="option-btn" data-val="little">少しむくむことがある</button>
+          <button class="option-btn" data-val="none">あまりない</button>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <p>Q5. 出血・貧血の症状はありますか？</p>
+        <div class="options" data-q="q5">
+          <button class="option-btn" data-val="heavy">出血が多い・貧血気味</button>
+          <button class="option-btn" data-val="tired">疲れやすい・顔色が悪い</button>
+          <button class="option-btn" data-val="none">特にない</button>
+        </div>
+      </div>
+
+      <button class="submit-btn" id="submit-btn" disabled onclick="showResult()">
+        今日の食事ヒントを見る 🌸
+      </button>
+    </div>
+  </div>
+
+  <div class="result-section" id="result-section">
+
+    <div class="result-card">
+      <h3>⚠️ 子宮の病気の方が気をつけたい食べ物</h3>
+      <div class="avoid-box">
+        <h4>できるだけ控えましょう</h4>
+        <ul>
+          <li>砂糖・甘い加工食品・清涼飲料水（炎症を促進する）</li>
+          <li>動物性脂肪の多い食事（牛肉・豚肉・バター）——エストロゲンを増やしやすい</li>
+          <li>大豆イソフラボンの過剰摂取（サプリ・豆乳の飲みすぎ）——ホルモンバランスに影響</li>
+          <li>冷たい飲み物・食べ物（子宮を冷やす）</li>
+          <li>アルコール（肝臓でのホルモン代謝に影響）</li>
+          <li>精製された炭水化物（白米・白パン・菓子パン）</li>
+          <li>添加物の多い加工食品・インスタント食品</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="result-card" id="result-main">
+    </div>
+
+    <div class="result-card">
+      <h3>🦠 腸内環境と炎症を整える食材</h3>
+      <div class="good-box">
+        <h4>酪酸菌・腸内環境を整える食材</h4>
+        <ul>
+          <li>ぬか漬け（酪酸菌が豊富）</li>
+          <li>味噌・納豆・キムチ（発酵食品）</li>
+          <li>ごぼう・玉ねぎ・バナナ（酪酸菌のエサになる食物繊維）</li>
+          <li>もち麦・オートミール（水溶性食物繊維）</li>
+        </ul>
+      </div>
+      <div class="good-box" style="margin-top:12px;">
+        <h4>炎症を抑える食材</h4>
+        <ul>
+          <li>青魚（サバ・イワシ・サンマ）——オメガ3脂肪酸が炎症を抑える</li>
+          <li>ターメリック（カレーのスパイス）——クルクミンが抗炎症作用</li>
+          <li>生姜——血行促進・抗炎症</li>
+          <li>ブロッコリー・キャベツ——スルフォラファンが免疫を助ける</li>
+          <li>トマト——リコピンが抗酸化作用</li>
+        </ul>
+      </div>
+      <p style="font-size:0.85em;color:#888;line-height:1.7;margin-top:10px;">
+        ※ 腸内環境は個人差が大きく、体質によって合う食材が異なります。少量から試して様子を見ながら取り入れましょう。
+      </p>
+    </div>
+
+    <div class="result-card">
+      <h3>🛁 湯船に毎日浸かることの大切さ</h3>
+      <div class="bath-box">
+        <h4>なぜ湯船が大切なのか</h4>
+        <ul>
+          <li>子宮は冷えに最も敏感な臓器の一つ——温めることで血の巡りが改善</li>
+          <li>老廃物が流れ、むくみが取れる</li>
+          <li>リンパの流れが良くなり免疫力が上がる</li>
+          <li>自律神経が整い、ホルモンバランスにも良い影響</li>
+          <li>このアプリを作った私自身も、毎日湯船に浸かることを続けています</li>
+        </ul>
+      </div>
+      <div class="good-box" style="margin-top:12px;">
+        <h4>湯船の入り方のポイント</h4>
+        <ul>
+          <li>38〜40℃のぬるめのお湯に15〜20分</li>
+          <li>半身浴でも◎——下半身を特に温める</li>
+          <li>生姜を少量入れると温め効果アップ</li>
+          <li>入浴後はすぐに体を冷やさないよう注意</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="result-card" id="moxibustion-card">
+      <h3>🔥 セルフお灸——子宮を温めて整えましょう</h3>
+      <div class="info-box">
+        <h4>💜 セルフお灸について</h4>
+        <p>
+          市販の<strong>せんねん灸</strong>はドラッグストアで購入できます。子宮の病気に関係するツボを温めることで、血の巡りを整え、冷えを改善し、免疫力を高める効果が期待できます。
+        </p>
+      </div>
+      <div id="moxibustion-points"></div>
+      <div class="good-box" style="margin-top:12px;">
+        <h4>セルフお灸の基本</h4>
+        <ul>
+          <li>1日1〜2回、各ツボに1〜2壮が目安</li>
+          <li>熱すぎたらすぐに外す</li>
+          <li>食後すぐ・入浴直後は避ける</li>
+          <li>毎日続けることが大切</li>
+        </ul>
+      </div>
+      <p style="font-size:0.82em;color:#888;line-height:1.7;margin-top:10px;">
+        ※ 治療中・妊娠中の方は主治医にご相談ください。
+      </p>
+    </div>
+
+    <div class="result-card">
+      <h3>🥢 今日から作れる簡単レシピ</h3>
+      <div class="recipe-item">
+        <h4>サバの味噌煮</h4>
+        <p>オメガ3脂肪酸で炎症を抑え、味噌で腸内環境も整える。缶詰でも十分。生姜を加えると温め効果アップ。</p>
+      </div>
+      <div class="recipe-item">
+        <h4>ごぼうと鶏肉のきんぴら</h4>
+        <p>ごぼうの食物繊維が酪酸菌のエサに。鶏肉で良質なたんぱく質を補給。消化に優しく体を温める一品。</p>
+      </div>
+      <div class="recipe-item">
+        <h4>生姜入り豆腐みそ汁</h4>
+        <p>毎日飲める基本の一杯。豆腐でたんぱく質、味噌で発酵食品、生姜で温め。シンプルだけど効果的。</p>
+      </div>
+      <div class="recipe-item">
+        <h4>ほうれん草と小松菜の胡麻和え</h4>
+        <p>鉄分が豊富で貧血予防に。胡麻のカルシウムとビタミンEも◎。出血が多い方に特におすすめ。</p>
+      </div>
+      <div class="recipe-item">
+        <h4>黒豆の煮物</h4>
+        <p>中医学では黒い食材は腎を補い、血を作るとされています。鉄分・アントシアニンも豊富。</p>
+      </div>
+    </div>
+
+    <div class="result-card">
+      <h3>🌿 参考情報・サポート</h3>
+      <div class="sensei-box">
+        <h4>🌊 ラドン温浴について</h4>
+        <p>
+          ラドンは微量の放射線を含む天然成分で、免疫力を高める・抗酸化作用があるという研究があります。<br><br>
+          横浜の<strong>リード</strong>では、がんの方向けのラドン温浴を行っています。興味がある方は調べてみてください。ただし、治療中の方は必ず主治医にご相談の上でご利用ください。
+        </p>
+      </div>
+      <div class="sensei-box" style="margin-top:12px;">
+        <h4>🌿 さおり薬膳</h4>
+        <p>
+          薬膳の考え方を日常生活に取り入れるアドバイスをされています。「がんの人は砂糖を抜いた方が良い」という考え方も参考にしています。<br><br>
+          <a href="https://saoriyakuzen.amebaownd.com" target="_blank" style="color:#d4457a;font-weight:bold;">▶ さおり薬膳 ホームページはこちら</a>
+        </p>
+      </div>
+      <div class="sensei-box" style="margin-top:12px;">
+        <h4>🧴 ホッティー薬店</h4>
+        <p>
+          漢方・自然療法の観点から、体に優しいセルフケアを発信されています。がんと向き合う方への食事・生活習慣のヒントも参考になります。<br><br>
+          <a href="https://hottyyakuten.shop-pro.jp" target="_blank" style="color:#d4457a;font-weight:bold;">▶ ホッティー薬店 ホームページはこちら</a>
+        </p>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      ⚠️ このアプリは医療行為ではありません。治療中の方は必ず主治医・薬剤師にご相談ください。食事は治療を補うものであり、治療の代わりにはなりません。<br><br>
+      <em>ドラッグストア歴19年 のんちゃん</em>
+    </div>
+
+    <div class="footer-note">
+      あなたの体は、あなたが思う以上に強い。🌸<br>
+      今日も一歩、一緒に。
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const answers = {};
+
+  document.querySelectorAll('.options').forEach(group => {
+    group.querySelectorAll('.option-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        group.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        answers[group.dataset.q] = btn.dataset.val;
+        updateProgress();
+      });
+    });
+  });
+
+  function updateProgress() {
+    const total = 5;
+    const filled = Object.keys(answers).length;
+    document.getElementById('progress').style.width = (filled / total * 100) + '%';
+    document.getElementById('submit-btn').disabled = filled < total;
+  }
+
+  function showResult() {
+    document.getElementById('form-section').style.display = 'none';
+    document.getElementById('result-section').style.display = 'block';
+    buildMainResult();
+    window.scrollTo(0, 0);
+  }
+
+  function buildMainResult() {
+    const q2 = answers.q2;
+    const q3 = answers.q3;
+    const q4 = answers.q4;
+    const q5 = answers.q5;
+
+    let title = '';
+    let desc = '';
+    let foods = [];
+    let tips = [];
+
+    if (q2 === 'purple' || q3 === 'verycold') {
+      title = '💜 瘀血・冷えタイプ——血の巡りを整えて温めましょう';
+      desc = '舌が紫がかっている、または強い冷えがある状態は、血の流れが滞っているサインです。子宮の病気と最も関係が深いタイプです。血行を促進し、体を温める食材を積極的に取り入れましょう。';
+      foods = ['黒豆・黒ごま・黒きくらげ', 'にら・たまねぎ・長ねぎ', 'さんま・青魚', 'しょうが・シナモン（少量）', 'なつめ（棗）', 'ターメリック（少量）'];
+      tips = ['温かいものを中心に食べる', '冷たい飲み物は避け、白湯や生姜湯を', '下半身を特に温める（腹巻き・レッグウォーマー）', '湯船に毎日浸かることを最優先に'];
+    } else if (q2 === 'pale' || q5 === 'heavy') {
+      title = '🌸 気血不足タイプ——血を補ってエネルギーを整えましょう';
+      desc = '舌が白っぽい、または出血・貧血がある状態は、気と血が不足しているサインです。鉄分と良質なたんぱく質を補いながら、消化に優しい食事を心がけましょう。';
+      foods = ['ほうれん草・小松菜・春菊（鉄分）', 'レバー（少量、鉄分が豊富）', '黒豆・小豆', 'なつめ（棗）', '鶏肉・卵・豆腐', '山芋・長芋'];
+      tips = ['消化に良いものをゆっくりよく噛んで食べる', '鉄分はビタミンCと一緒に取ると吸収が良い', '疲れているときは無理せず、食べられるものを', '温かいスープやお粥で胃腸を労わる'];
+    } else if (q2 === 'red' || q3 === 'hot') {
+      title = '🔴 陰虚・熱タイプ——体の熱を鎮めて潤いを補いましょう';
+      desc = '舌が赤くほてりがある状態は、体に熱がこもりやすいサインです。炎症を抑え、体を潤わせる食材を取り入れましょう。';
+      foods = ['白きくらげ・百合根', 'れんこん・ごぼう', '豆腐・豆乳（適量）', '梨・りんご（加熱）', 'ブロッコリー・トマト', '緑茶（適量）'];
+      tips = ['辛いもの・揚げ物・アルコールは特に避ける', '水分はこまめに、温かいものを', '激しい運動より、軽いウォーキングやヨガを', '夜更かしは体の熱を増やすので睡眠を大切に'];
+    } else {
+      title = '🌱 バランスタイプ——現状維持と免疫力アップを心がけましょう';
+      desc = '比較的バランスが取れている状態です。子宮の病気には冷えと炎症が関わりやすいため、予防的な食事と生活習慣を意識しましょう。';
+      foods = ['発酵食品（味噌・納豆・ぬか漬け）', '青魚（サバ・イワシ）', 'ブロッコリー・キャベツ', '生姜・ターメリック', '黒ごま・黒豆', 'きのこ類（免疫を整える）'];
+      tips = ['毎日同じ時間に食事を取り体内リズムを整える', '腸内環境を意識して発酵食品を毎日少量', '砂糖・精製食品を少しずつ減らしていく', '湯船とセルフお灸を日課にする'];
+    }
+
+    // むくみ追加
+    let edemaNote = '';
+    if (q4 === 'strong') {
+      edemaNote = `
+        <div class="good-box" style="margin-top:14px;">
+          <h4>💧 むくみを改善する食材</h4>
+          <ul>
+            <li>はと麦——むくみを取る薬膳の定番食材</li>
+            <li>小豆——利尿作用があり余分な水分を排出</li>
+            <li>とうもろこしのひげ茶——むくみに効果的</li>
+            <li>きゅうり・冬瓜——余分な熱と水分を取り除く</li>
+            <li>塩分を控える（精製塩ではなく天然塩を少量）</li>
+          </ul>
+        </div>`;
+    }
+
+    // 家族向け
+    let familyNote = '';
+    if (answers.q1 === 'family') {
+      familyNote = `
+        <div class="info-box" style="margin-top:14px;">
+          <h4>💜 サポートされている方へ</h4>
+          <p>
+            何をしてあげればいいかわからない、という気持ちは当然です。<br><br>
+            毎日の食事を一緒に考えてあげること、温かいものを用意してあげること——それだけで十分です。<br><br>
+            サポートする側も無理しすぎないでください。あなたの健康も大切です。
+          </p>
+        </div>`;
+    }
+
+    const html = `
+      <h3>🌸 あなたの体質タイプ</h3>
+      <p style="font-size:1.05em;font-weight:bold;color:#d4457a;margin-bottom:10px;">${title}</p>
+      <p style="font-size:0.9em;color:#555;line-height:1.7;margin-bottom:16px;">${desc}</p>
+      <div class="good-box">
+        <h4>今日から食べると良い食材</h4>
+        <ul>${foods.map(f => `<li>${f}</li>`).join('')}</ul>
+      </div>
+      <div class="good-box" style="margin-top:12px;">
+        <h4>生活のポイント</h4>
+        <ul>${tips.map(t => `<li>${t}</li>`).join('')}</ul>
+      </div>
+      ${edemaNote}
+      ${familyNote}
+    `;
+
+    document.getElementById('result-main').innerHTML = html;
+    buildMoxibustion(q2, q3, q4);
+  }
+
+  function buildMoxibustion(q2, q3, q4) {
+    const points = [];
+
+    // 共通ツボ
+    points.push({
+      name: '三陰交（さんいんこう）',
+      location: '内くるぶしの上、指4本分上がったところ',
+      effect: '子宮・卵巣に直結するツボ。血の巡りを整え、冷えを改善。婦人科系の不調に最もよく使われる定番ツボ'
+    });
+
+    points.push({
+      name: '足三里（あしさんり）',
+      location: 'ひざのお皿の外側の下、指4本分下がったところ',
+      effect: '胃腸を整え免疫力を高める。体力をつけたいときに。全身の調子を整える万能ツボ'
+    });
+
+    if (q3 === 'verycold' || q3 === 'cold') {
+      points.push({
+        name: '関元（かんげん）',
+        location: 'へその下、指4本分下がったところ',
+        effect: '子宮を温める最重要ツボ。冷えからくる婦人科系の不調に特に効果的。お腹を温めるイメージで'
+      });
+    }
+
+    if (q4 === 'strong') {
+      points.push({
+        name: '陰陵泉（いんりょうせん）',
+        location: 'ひざの内側、すねの骨の際のくぼみ',
+        effect: 'むくみを取り除く代表的なツボ。余分な水分を排出し、下半身のむくみに効果的'
+      });
+    }
+
+    if (q2 === 'purple') {
+      points.push({
+        name: '血海（けっかい）',
+        location: 'ひざのお皿の内側の上、指3本分上がったところ',
+        effect: '血の巡りを良くする。子宮筋腫・生理不順・生理痛にもよく使われるツボ'
+      });
+    }
+
+    const html = points.map(p => `
+      <div class="recipe-item" style="margin-bottom:12px;">
+        <h4>📍 ${p.name}</h4>
+        <p><strong>場所：</strong>${p.location}</p>
+        <p style="margin-top:4px;"><strong>効果：</strong>${p.effect}</p>
+      </div>
+    `).join('');
+
+    document.getElementById('moxibustion-points').innerHTML = html;
+  }
+</script>
+</body>
+</html>
